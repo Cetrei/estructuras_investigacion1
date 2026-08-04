@@ -1,6 +1,6 @@
 import { existsSync, readdirSync, copyFileSync, mkdirSync } from "node:fs";
 import { readFileSync } from "node:fs";
-import { parse as parseYaml } from "js-yaml";
+import { load as parseYaml } from "js-yaml";
 
 const REPO_ROOT = `${import.meta.dir}/..`;
 const INFORME_DIR = `${REPO_ROOT}/informe`;
