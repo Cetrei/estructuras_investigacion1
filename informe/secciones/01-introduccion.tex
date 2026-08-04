@@ -1,3 +1,36 @@
 % !TEX root = ../main.tex
 \section{Introducción}
-% TODO: contexto del caso, propósito del informe, organización del documento.
+
+Las organizaciones que administran grandes volúmenes de información,
+como universidades, bancos u hospitales, dependen de que esa información
+esté organizada de forma eficiente para poder consultarla, actualizarla
+y recuperarla sin demoras. Antes de construir cualquier sistema
+informático que cumpla esa función es necesario comprender el problema
+que se pretende resolver, identificar con precisión los datos que se van
+a administrar, diseñar las estructuras adecuadas para contenerlos y
+analizar la eficiencia de los algoritmos que van a manipularlos.
+
+Este informe desarrolla ese proceso de diseño para un caso hipotético
+planteado como ejercicio académico: la Universidad XUNA, una institución
+ficticia de aproximadamente 25\,000 estudiantes que busca reemplazar un
+conjunto de formularios, hojas electrónicas y programas aislados por un
+Sistema de Gestión Académica centralizado. El caso exige administrar
+catorce datos por estudiante (identificación, nombre, información de
+contacto, situación académica, entre otros) y soportar operaciones como
+registrar, buscar por distintas llaves, modificar, eliminar y generar
+reportes sobre esa población estudiantil, bajo dos restricciones técnicas
+explícitas: el sistema debe construirse en C++ estructurado, sin
+Programación Orientada a Objetos y sin la Standard Template Library, y
+toda decisión de diseño debe documentarse junto con su costo
+computacional expresado en notación Big O.
+
+Este documento no implementa el sistema: propone y justifica su diseño.
+Se identifican y clasifican los datos que el caso exige administrar, se
+diseña el registro que representa a un estudiante, se diseña el arreglo
+que almacena esos registros en memoria, se identifican y documentan las
+funciones necesarias para resolver el problema junto con su costo
+computacional, y se propone tanto un archivo secuencial como un archivo
+indexado para persistir la información entre ejecuciones del programa.
+Cada una de estas decisiones se acompaña de su justificación técnica, de
+modo que el diseño resultante no sea solo una propuesta funcional, sino
+también una propuesta razonada.
