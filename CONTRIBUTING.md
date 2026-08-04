@@ -69,7 +69,7 @@ Esto recorre todos los `.mmd` de `diagramas/src/` y genera su SVG correspondient
 
 ## Flujo de commits (Conventional Commits + commitlint)
 
-El repo usa [Conventional Commits](https://www.conventionalcommits.org/) para el mensaje de cada commit, forzado con `commitlint` via un git hook. Esto da un historial legible y permite generar un changelog automatico mas adelante si hace falta.
+El repo usa [Conventional Commits](https://www.conventionalcommits.org/) para el mensaje de cada commit, forzado con `commitlint`. Revisar como escribirlos para evitar problemas al hacer commit.
 
 ### Formato del mensaje
 
@@ -106,28 +106,10 @@ chore(deps): agregar bun.lock y package.json inicial
 docs: documentar flujo de git y convencion de commits en CONTRIBUTING
 ```
 
-### Instalar commitlint
-
-```bash
-bun add -d @commitlint/cli @commitlint/config-conventional husky
-```
-
-Crear `commitlint.config.js` en la raiz:
-
-```js
-export default {
-  extends: ["@commitlint/config-conventional"],
-};
-```
-
-Activar el hook de `commit-msg` con husky:
-
-```bash
-bunx husky init
-echo 'bunx --no -- commitlint --edit "$1"' > .husky/commit-msg
-```
-
-Con esto, cualquier `git commit` con un mensaje que no siga el formato se rechaza antes de crear el commit, en vez de descubrirlo despues.
+El hook de `commit-msg` ya viene configurado en el repo (`commitlint.config.js`,
+`.husky/commit-msg`): al hacer `bun install`, cualquier `git commit` con un
+mensaje que no siga el formato se rechaza automaticamente antes de crearse.
+No hace falta instalar ni configurar nada aparte.
 
 ### Trabajar en rama y hacer merge
 
@@ -137,7 +119,6 @@ git checkout -b informe/05-diseno-registro
 git add informe/secciones/05-diseno-registro.tex
 git commit -m "feat(informe): agregar seccion 05-diseno-registro"
 git push -u origin informe/05-diseno-registro
-# abrir PR o hacer merge directo a main segun lo acordado
 ```
 
 ## Decisiones de diseño
