@@ -1,0 +1,27 @@
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.bbl
+*.bcf
+*.blg
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+*.run.xml
+*.xdv
+
+# LaTeX local (instalado por scripts/installLatex.ts, ~1-2 GB, no va a git)
+.texlive/
+
+# Node / Bun
+node_modules/
+bun.lockb
+bun.lock
+
+# OS
+.DS_Store
+Thumbs.db
