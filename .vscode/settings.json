@@ -1,4 +1,7 @@
 {
     "ltex.language": "es",
-    "latex-workshop.latex.rootFile.path": "%WORKSPACE_FOLDER%/informe/main.tex"
+    "latex-workshop.latex.rootFile.path": "%WORKSPACE_FOLDER%/informe/main.tex",
+    "latex-workshop.latex.autoBuild.run": "onSave",
+    "latex-workshop.view.pdf.viewer": "tab",
+    "latex-workshop.latex.path": "%WORKSPACE_FOLDER%/.texlive/.TinyTeX/bin/x86_64-linux"
 }
