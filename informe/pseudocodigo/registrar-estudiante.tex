@@ -4,6 +4,7 @@ funcion registrarEstudiante(datos):
         retornar ERROR
 
     posicion = buscarEspacioLibre()
+
     si posicion == NO_HAY_ESPACIO:
         posicion = expandirVector()
 
@@ -11,7 +12,7 @@ funcion registrarEstudiante(datos):
     escribirRegistroEnOffset(academico.dat, posicion, datos.academico)
     escribirRegistroEnOffset(contacto.dat, posicion, datos.contacto)
 
-    insertarEnIndicePrimario(datos.carne, posicion)
+    registrarPosicionEnMapa(datos.carne, posicion)
 
     retornar EXITO
 \end{lstlisting}

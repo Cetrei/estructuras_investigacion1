@@ -2,16 +2,18 @@
 \section{Diseño del arreglo que almacenará los estudiantes}
 
 El arreglo de registros completos no se carga en memoria principal: vive
-en disco, en los tres archivos binarios descritos en la sección 5. Lo que
-sí reside en RAM en todo momento es un arreglo mucho más liviano, el
-índice, que solo guarda la llave de búsqueda, la posición física del
-registro en disco y su estado (ver sección 14).
+en disco, en los tres archivos binarios descritos en la sección anterior.
+Lo que sí reside en RAM en todo momento es un arreglo mucho más liviano,
+al que llamamos \textbf{mapa de posiciones}: guarda únicamente la llave de
+búsqueda, la posición física del registro en disco y su estado, sin el
+resto de los datos del estudiante (el funcionamiento completo de este
+mapa se detalla en la sección de archivo indexado).
 
 \subsection{Por qué cargar todo en memoria no escala}
 
-\begin{longtable}{p{4.5cm} p{2.5cm} p{2.5cm} p{2.5cm}}
+\begin{longtable}{p{4.5cm} p{3cm} p{3cm} p{2cm}}
 \toprule
-Cantidad de estudiantes & Registro completo (3 archivos) & Solo índice (3 índices) & Ahorro \\
+Cantidad de estudiantes & Registro completo (3 archivos) & Solo mapas de posiciones (3 mapas) & Ahorro \\
 \midrule
 \endhead
 25\,000 & $\approx$ 6.2 MB & $\approx$ 1.2 MB & 5 veces \\
@@ -21,11 +23,11 @@ Cantidad de estudiantes & Registro completo (3 archivos) & Solo índice (3 índi
 \end{longtable}
 
 El cálculo usa 259 bytes por estudiante (suma de los tres structs de la
-sección 5, sin contar relleno de alineación) contra 16 bytes por entrada
-de índice (carné, posición y estado), multiplicado por tres índices
-(primario, identificación, apellido). Aunque un millón de registros
-completos (aproximadamente 259 MB) todavía cabría en la memoria de una
-máquina moderna, el diseño no depende de esa suposición: el costo en RAM
-del índice crece mucho más lento que el de los datos completos, por lo que
-la arquitectura sigue siendo viable sin importar cuánto crezca la
-matrícula de la universidad.
+sección de diseño del registro, sin contar relleno de alineación) contra
+16 bytes por entrada de mapa (carné, posición y estado), multiplicado por
+tres mapas (por carné, por identificación, por apellido). Aunque un
+millón de registros completos (aproximadamente 259 MB) todavía cabría en
+la memoria de una máquina moderna, el diseño no depende de esa suposición:
+el costo en RAM de los mapas crece mucho más lento que el de los datos
+completos, por lo que la arquitectura sigue siendo viable sin importar
+cuánto crezca la matrícula de la universidad.

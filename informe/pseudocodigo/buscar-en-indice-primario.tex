@@ -1,12 +1,13 @@
 \begin{lstlisting}[style=pseudocodigo]
-funcion buscarEnIndicePrimario(carne):
-    posicion = busquedaBinaria(zonaPrimaria, carne)
+funcion buscarPosicionPorCarne(carne):
+    posicion = busquedaBinaria(zonaOrdenada, carne)
+
     si posicion != NO_ENCONTRADO:
         retornar posicion
 
-    para i desde 0 hasta longitud(zonaAltasNuevas) - 1:
-        si zonaAltasNuevas[i].carne == carne:
-            retornar zonaAltasNuevas[i].posicion
+    para i desde 0 hasta longitud(listaRecienIngresados) - 1:
+        si listaRecienIngresados[i].carne == carne:
+            retornar listaRecienIngresados[i].posicion
 
     retornar NO_ENCONTRADO
 \end{lstlisting}

@@ -4,15 +4,15 @@
 Accepted
 
 ## Context
-El enunciado de la investigacion pide administrar trece datos por
+El enunciado de la investigacion pide administrar catorce datos por
 estudiante (numero de carne, identificacion, nombre, apellidos, fecha de
 nacimiento, sexo, carrera, nivel academico, correo, telefono, direccion,
 creditos aprobados, promedio y estado), pero no propone ninguna forma de
 organizarlos: solo los enumera como una lista de requisitos que el sistema
 debe guardar.
 
-El primer intento del equipo fue juntar los trece campos en un solo
-registro. Al revisarlo aparecio un problema: esos trece campos no cambian
+El primer intento del equipo fue juntar los catorce campos en un solo
+registro. Al revisarlo aparecio un problema: esos catorce campos no cambian
 con la misma frecuencia ni se usan juntos en las mismas operaciones. El
 nombre y la fecha de nacimiento de un estudiante practicamente nunca
 cambian una vez matriculado. El promedio y los creditos aprobados se

@@ -3,10 +3,11 @@
 
 El pseudocódigo se escribe en sintaxis C simplificada: condicionales,
 ciclos y llamadas a función explícitas, sin declarar tipos de bajo nivel
-que no aportan a entender el algoritmo. Esto es distinto de los diagramas
-de flujo de la sección 15, donde sí se usa la notación de subdiagrama
-(\texttt{| paso |}) para marcar qué pasos se expanden en un diagrama
-aparte.
+que no aportan a entender el algoritmo. Cada bloque corresponde a un solo
+camino de decisión por línea, para que sea directo de traducir a un
+diagrama de flujo (ver sección de diagramas): cada \texttt{si}, cada
+ciclo y cada \texttt{retornar} es un bloque separado que corresponde a un
+nodo o una decisión distinta en el diagrama.
 
 % El pseudocodigo de cada funcion vive en su propio archivo dentro de
 % informe/pseudocodigo/, editable sin tocar la prosa de esta seccion.
@@ -17,7 +18,7 @@ aparte.
 \subsection{buscarEstudiantePorCarne(carne)}
 \input{pseudocodigo/buscar-estudiante-por-carne}
 
-\subsection{buscarEnIndicePrimario(carne)}
+\subsection{buscarPosicionPorCarne(carne)}
 \input{pseudocodigo/buscar-en-indice-primario}
 
 \subsection{buscarEstudiantesPorApellido(apellido)}
@@ -26,10 +27,10 @@ aparte.
 \subsection{eliminarEstudianteLogico(carne)}
 \input{pseudocodigo/eliminar-estudiante-logico}
 
-\subsection{insertarEnIndicePrimario(carne, posicion)}
+\subsection{registrarPosicionEnMapa(carne, posicion)}
 \input{pseudocodigo/insertar-en-indice-primario}
 
-\subsection{reorganizarIndicePrimario()}
+\subsection{fusionarRecienIngresados()}
 \input{pseudocodigo/reorganizar-indice-primario}
 
 \subsection{purgarInactivos()}

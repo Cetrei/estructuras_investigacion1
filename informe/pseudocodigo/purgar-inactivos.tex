@@ -17,11 +17,11 @@ funcion purgarInactivos():
     reemplazarArchivo(academico.dat, academicoTemp.dat)
     reemplazarArchivo(contacto.dat, contactoTemp.dat)
 
-    // las posiciones cambiaron: reconstruir los tres indices desde cero,
-    // no se puede reutilizar la zona de altas nuevas anterior (ver ADR 004)
-    indicePrimario = reconstruirIndice(identidad.dat, CARNE)
-    indiceIdentificacion = reconstruirIndice(identidad.dat, IDENTIFICACION)
-    indiceApellido = reconstruirIndice(identidad.dat, APELLIDO)
+    // las posiciones cambiaron: reconstruir los tres mapas desde cero,
+    // no se puede reutilizar la lista de recien ingresados anterior (ver ADR 004)
+    mapaCarne = reconstruirMapa(identidad.dat, CARNE)
+    mapaIdentificacion = reconstruirMapa(identidad.dat, IDENTIFICACION)
+    mapaApellido = reconstruirMapa(identidad.dat, APELLIDO)
 
     retornar EXITO
 \end{lstlisting}

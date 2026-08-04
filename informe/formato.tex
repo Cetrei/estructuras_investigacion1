@@ -2,6 +2,18 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 
+% --- Tipografia APA 7 --------------------------------------------------
+% La clase apa7 ya cumple por defecto con margenes de 1 pulgada,
+% interlineado doble y los 5 niveles de encabezado (centrado/negrita,
+% izquierda/negrita, izquierda/negrita-cursiva, etc.) segun su propia
+% documentacion. La 7ma edicion de APA acepta tanto fuentes serif de
+% 12pt (Times New Roman) como Computer Modern 10pt (la fuente por
+% defecto de LaTeX), asi que no es obligatorio cambiar la fuente. Se
+% fuerza aqui Times (via mathptmx) para que el PDF final se vea
+% consistente con "Times New Roman 12pt", que es el estandar mas
+% reconocible y el que suele pedirse en cursos que no aceptan LaTeX.
+\usepackage{mathptmx}
+
 \usepackage{graphicx}
 \usepackage{svg}
 
@@ -29,20 +41,14 @@
     urlcolor=blue
 }
 
-% biblatex-apa se encarga del formato de citas y bibliografia en APA 7
 \usepackage[style=apa, backend=biber]{biblatex}
 \DeclareLanguageMapping{spanish}{spanish-apa}
 \addbibresource{referencias.bib}
 
 % Logo institucional en el header de cada pagina (esquina superior derecha).
-% apa7.cls en modo stu ya usa fancyhdr internamente para el numero de
-% pagina (pagestyle 'apastyle' / 'fancy', segun version); se agrega el logo
-% ahi sin tocar el numero de pagina que ya funciona nativo. Colocar el
-% archivo real en informe/assets/logo-una.png (ver informe/assets/README.md).
 \IfFileExists{assets/logo-una.png}{%
     \fancyhead[R]{\includegraphics[height=1cm]{assets/logo-una.png}}%
 }{}%
 
-% Punto centralizado para overrides de encabezados (h1-h5). Ver ese archivo
-% para por que esta vacio por defecto.
+% Punto centralizado para overrides de encabezados (h1-h5)
 \input{encabezados}

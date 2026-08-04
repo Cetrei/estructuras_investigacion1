@@ -5,26 +5,39 @@ Recorrer secuencialmente un archivo de cientos de miles de registros para
 ubicar un solo estudiante cuesta $O(n)$: es aceptable con 25\,000
 registros, pero se vuelve lento a la escala que el caso de estudio
 anticipa. La solución no es cargar todos los registros a memoria (la
-sección 7 ya descarta esa opción por el espacio que ocuparía), sino
-mantener en RAM una estructura mucho más liviana que solo indique dónde
-está cada registro en disco: un archivo indexado.
+sección de diseño del arreglo ya descarta esa opción por el espacio que
+ocuparía), sino mantener en RAM una estructura mucho más liviana que solo
+indique dónde está cada registro en disco: un archivo indexado.
 
-\subsection{Funcionamiento general de un índice ISAM}
+\subsection{Funcionamiento general del mapa de posiciones}
+% TODO(cita): esta subseccion describe ISAM (Indexed Sequential Access
+% Method). Falta agregar una referencia bibliografica real (el libro de
+% texto del curso, o una fuente academica formal sobre organizacion de
+% archivos/ISAM) y citarla aqui con \autocite{} o \textcite{}, ademas de
+% agregar la entrada correspondiente en referencias.bib. No inventar el
+% autor/anio: usar la fuente que el curso recomiende.
 
 El patrón adoptado corresponde a ISAM (\emph{Indexed Sequential Access
 Method}), la técnica que usaban los primeros motores de bases de datos
-relacionales antes de que los árboles B y B+ se volvieran el estándar.
-ISAM separa dos responsabilidades que un árbol balanceado resuelve juntas:
-mantiene los datos ordenados en un archivo secuencial, y mantiene aparte
-una estructura de índice, también ordenada, que guarda únicamente la
-llave y la posición física del dato. Con esa estructura se puede saltar
-directo al registro deseado en vez de recorrer el archivo completo.
+relacionales antes de que los árboles B y B+ se volvieran el estándar. En
+este informe nos referimos a esta estructura simplemente como el
+\textbf{mapa de posiciones}, porque describe mejor lo que hace: para cada
+llave de búsqueda (carné, identificación o apellido) guarda únicamente
+dónde está el registro correspondiente en disco, no el registro en sí.
+
+ISAM separa dos responsabilidades que un árbol balanceado resuelve
+juntas: mantiene los datos ordenados en un archivo secuencial, y mantiene
+aparte una estructura de índice, también ordenada, que guarda únicamente
+la llave y la posición física del dato. Con esa estructura se puede
+saltar directo al registro deseado en vez de recorrer el archivo
+completo.
 
 La parte que le da a ISAM su nombre completo es cómo maneja las
 inserciones. En vez de reescribir el archivo ordenado cada vez que entra
 un estudiante nuevo, esas altas se acumulan en una zona aparte, sin
-ordenar, y se integran a la zona ordenada más adelante, en un solo
-proceso, cuando esa zona aparte ya acumuló suficientes.
+ordenar, a la que llamamos \textbf{lista de recién ingresados}, y se
+integran a la zona ordenada más adelante, en un solo proceso, cuando esa
+lista ya acumuló suficientes estudiantes.
 % TODO: ampliar con el detalle de bloques y paginas si se decide profundizar mas
 % en el funcionamiento clasico de ISAM (IBM) para la version final.
 
@@ -53,74 +66,76 @@ complejidad de implementarlo:
     individual.
 \end{itemize}
 
-\subsection{Índice primario: carné}
+\subsection{Mapa por carné}
 
-El índice primario ordena por carné y se divide en dos zonas, tal como se
+El mapa por carné ordena por carné y se divide en dos partes, tal como se
 documenta en el ADR 001:
 
 \begin{itemize}
-    \item Zona primaria: arreglo ordenado, donde se busca con búsqueda
+    \item Zona ordenada: arreglo ordenado, donde se busca con búsqueda
     binaria en $O(\log n)$.
-    \item Zona de altas nuevas: arreglo sin ordenar donde se agregan los
-    estudiantes recién registrados en $O(1)$, revisado de principio a fin
-    cuando la zona primaria no encuentra la llave buscada.
+    \item Lista de recién ingresados: arreglo sin ordenar donde se
+    agregan los estudiantes recién registrados en $O(1)$, revisado de
+    principio a fin cuando la zona ordenada no encuentra la llave
+    buscada.
 \end{itemize}
 
-Cada entrada del índice ocupa únicamente el carné, la posición en disco y
-el estado, no el registro completo. Eso es lo que permite que el índice
-quepa en RAM aunque los datos completos no quepan (sección 7).
+Cada entrada del mapa ocupa únicamente el carné, la posición en disco y
+el estado, no el registro completo. Eso es lo que permite que el mapa
+quepa en RAM aunque los datos completos no quepan (sección de diseño del
+arreglo).
 
-\subsection{Índices secundarios: identificación y apellido}
+\subsection{Mapas por identificación y por apellido}
 
 El caso de estudio exige buscar también por identificación y por
 apellido, ninguna de las dos es la llave primaria. En vez de recorrer el
-archivo completo para esas búsquedas, se agregan dos índices adicionales
+archivo completo para esas búsquedas, se agregan dos mapas adicionales
 (ADR 003), los dos apuntando a la misma posición física en
 \texttt{identidad.dat}, sin duplicar el registro del estudiante:
 
 \begin{itemize}
-    \item Índice por identificación: funciona igual que el índice de
-    carné, con zona primaria y zona de altas nuevas, porque buscar por
+    \item Mapa por identificación: funciona igual que el mapa por carné,
+    con zona ordenada y lista de recién ingresados, porque buscar por
     identificación pasa tan seguido como buscar por carné, por ejemplo
     durante matrícula o para verificar la identidad de un estudiante.
-    \item Índice por apellido: no se actualiza en cada estudiante nuevo
+    \item Mapa por apellido: no se actualiza en cada estudiante nuevo
     como los otros dos. En vez de eso, se arma de nuevo por completo la
     primera vez que alguien pide una búsqueda o un reporte por apellido
     después de que hubo cambios desde la última vez que se armó, y
     también se arma de nuevo durante el proceso de apagado. Se hace así
     porque las búsquedas por apellido son típicamente para generar
     reportes, algo que ocurre de vez en cuando, no una operación que se
-    repite en cada uso del sistema. Armar este índice de nuevo en cada
+    repite en cada uso del sistema. Armar este mapa de nuevo en cada
     estudiante registrado pagaría un costo de $O(n \log n)$ cada vez, por
     un beneficio que casi nunca se usa de inmediato.
 \end{itemize}
 
-Esta forma de trabajar (un solo dato físico, varios índices apuntando a
-él) es el mismo patrón que un índice secundario en un motor de bases de
-datos SQL: la tabla vive en un solo lugar, los índices solo indican dónde
+Esta forma de trabajar (un solo dato físico, varios mapas apuntando a él)
+es el mismo patrón que un índice secundario en un motor de bases de datos
+SQL: la tabla vive en un solo lugar, los índices solo indican dónde
 buscar.
 
 \subsection{Reorganización y persistencia}
 \label{sec:reorganizacion}
 
-Cuando la zona de altas nuevas del índice primario o del índice de
-identificación llega al 10\% del tamaño de su zona primaria, se ejecuta
-una reorganización con el sistema encendido: se juntan ambas zonas en
-$O(n \log n)$ y la zona de altas nuevas queda vacía otra vez. Esta
-reorganización no toca los archivos de datos en disco, solo la estructura
-de índice en RAM.
+Cuando la lista de recién ingresados del mapa por carné o del mapa por
+identificación llega al 10\% del tamaño de su zona ordenada, se ejecuta
+una reorganización con el sistema encendido: se juntan la zona ordenada y
+la lista de recién ingresados en $O(n \log n)$, y la lista queda vacía
+otra vez. Esta reorganización no toca los archivos de datos en disco,
+solo la estructura del mapa en RAM.
 
 Al apagar el sistema ocurre un proceso distinto, descrito en el ADR 004:
 primero se purgan los registros inactivos de los tres archivos de datos,
-y después el índice completo se arma de nuevo desde cero a partir del
-archivo ya compactado, en vez de juntar la zona de altas nuevas que
+y después los tres mapas se arman de nuevo desde cero a partir del
+archivo ya compactado, en vez de juntar la lista de recién ingresados que
 existía antes de purgar. La razón es que la purga cambia la posición
 física de todos los registros que estaban después de uno eliminado, lo
-cual deja invalido cualquier índice armado antes de purgar, sin importar
-si ya estaba reorganizado o no.
+cual deja inválido cualquier mapa armado antes de purgar, sin importar si
+ya estaba reorganizado o no.
 
-El índice completo (zona primaria, zona de altas nuevas y los dos índices
-secundarios) se guarda en el archivo \texttt{estudiantes.idx} al apagar,
-para que la próxima vez que se encienda el sistema alcance con cargar el
-índice ya armado en $O(n)$, en vez de reconstruirlo desde los archivos de
-datos.
+Los tres mapas completos (por carné, por identificación y por apellido,
+cada uno con su zona ordenada) se guardan en el archivo
+\texttt{estudiantes.idx} al apagar, para que la próxima vez que se
+encienda el sistema alcance con cargar los mapas ya armados en $O(n)$, en
+vez de reconstruirlos desde los archivos de datos.

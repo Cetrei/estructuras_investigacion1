@@ -1,17 +1,17 @@
 % !TEX root = ../main.tex
 \section{Diseño del registro Estudiante}
 
-El enunciado de la investigación pide administrar trece datos por
+El enunciado de la investigación pide administrar catorce datos por
 estudiante: número de carné, identificación, nombre, apellidos, fecha de
 nacimiento, sexo, carrera, nivel académico, correo electrónico, número
-telefónico, dirección, cantidad de créditos aprobados y promedio general,
-además del estado del estudiante. El enunciado no propone ninguna forma de
-organizar estos datos, solo los enumera como requisitos que el sistema
-debe guardar.
+telefónico, dirección, cantidad de créditos aprobados, promedio general y
+estado del estudiante. El enunciado no propone ninguna forma de organizar
+estos datos, solo los enumera como requisitos que el sistema debe
+guardar.
 
-El primer intento del equipo fue juntar los trece campos en un único
-registro. Al revisarlo con cuidado apareció un problema: esos trece campos
-no cambian con la misma frecuencia ni se usan juntos en las mismas
+El primer intento del equipo fue juntar los catorce campos en un único
+registro. Al revisarlo con cuidado apareció un problema: esos catorce
+campos no cambian con la misma frecuencia ni se usan juntos en las mismas
 operaciones. El nombre y la fecha de nacimiento de un estudiante casi
 nunca cambian una vez matriculado. El promedio y los créditos aprobados se
 actualizan varias veces durante la carrera del estudiante, cada período
@@ -45,16 +45,18 @@ Datos que identifican al estudiante como persona: carné, identificación,
 nombre, apellidos, fecha de nacimiento y sexo.
 
 \begin{lstlisting}[style=pseudocodigo]
-typedef struct {
-    int carne;
-    char identificacion[13];
-    TipoIdentificacion tipoIdentificacion;
-    char nombre[21];
-    char apellido1[21];
-    char apellido2[21];
-    Fecha fechaNacimiento;
-    int sexo;
-} IdentidadEstudiante;
+typedef struct
+{
+    int                 carne;
+    char                identificacion[13];
+    TipoIdentificacion  tipoIdentificacion;
+    char                nombre[21];
+    char                apellido1[21];
+    char                apellido2[21];
+    Fecha               fechaNacimiento;
+    int                 sexo;
+}
+IdentidadEstudiante;
 \end{lstlisting}
 
 \subsection{AcademicoEstudiante}
@@ -62,14 +64,16 @@ Datos de la situación académica actual del estudiante, que cambian cada
 período lectivo.
 
 \begin{lstlisting}[style=pseudocodigo]
-typedef struct {
-    int carne;
-    int carrera;
-    int nivelAcademico;
-    int creditosAprobados;
-    float promedio;
-    int estado;
-} AcademicoEstudiante;
+typedef struct
+{
+    int    carne;
+    int    carrera;
+    int    nivelAcademico;
+    int    creditosAprobados;
+    float  promedio;
+    int    estado;
+}
+AcademicoEstudiante;
 \end{lstlisting}
 
 \subsection{ContactoEstudiante}
@@ -77,10 +81,12 @@ Datos usados para comunicarse con el estudiante, que cambian con poca
 frecuencia.
 
 \begin{lstlisting}[style=pseudocodigo]
-typedef struct {
-    int carne;
-    char correo[41];
-    char telefono[9];
-    char direccion[81];
-} ContactoEstudiante;
+typedef struct
+{
+    int   carne;
+    char  correo[41];
+    char  telefono[9];
+    char  direccion[81];
+}
+ContactoEstudiante;
 \end{lstlisting}

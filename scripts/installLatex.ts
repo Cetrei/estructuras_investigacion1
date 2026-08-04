@@ -90,16 +90,7 @@ async function instalarTinyTeXLinuxMac() {
   console.log("Descargando e instalando TinyTeX (Linux/macOS)...");
   mkdirSync(TEXLIVE_DIR, { recursive: true });
 
-  // TINYTEX_DIR es la carpeta PADRE donde el instalador crea su propia
-  // subcarpeta .TinyTeX/ (TINYTEX_DIR=.texlive resulta en .texlive/.TinyTeX/,
-  // que es exactamente TINYTEX_ROOT). Pasarle TINYTEX_ROOT directamente
-  // anida dos veces: .texlive/.TinyTeX/.TinyTeX/.
-  //
-  // No se usa --no-path: ese flag causa un bug de parseo en este instalador
-  // (confunde el flag con el argumento posicional de destino del .tar.xz
-  // descargado y falla el 'mv'). Sin el flag, el instalador agrega symlinks
-  // en ~/.local/bin apuntando a esta carpeta del repo, comportamiento
-  // estandar documentado de TinyTeX.
+  // TINYTEX_DIR es la carpeta PADRE donde el instalador crea su propia subcarpeta .TinyTeX/
   await ejecutar(
     ["bash", "-c", "wget -qO- https://yihui.org/tinytex/install-bin-unix.sh | sh"],
     { cwd: TEXLIVE_DIR, env: { TINYTEX_DIR: TEXLIVE_DIR } }
@@ -128,18 +119,12 @@ function resolverBinDirLocal(): string | null {
   return `${binBase}/${carpetas[0]}`;
 }
 
-// Actualiza latex-workshop.latex.path en .vscode/settings.json con la
-// carpeta de arquitectura real detectada tras instalar TinyTeX (varia por
-// SO: x86_64-linux, windows, universal-darwin), sin tocar el resto de las
-// claves que ya haya en el archivo (ltex.language, rootFile.path, etc).
-// Este setting es especifico de la maquina de cada quien, pero se escribe
-// automaticamente asi nadie tiene que editarlo a mano.
+// Actualiza latex-workshop.latex.path en .vscode/settings.json con la carpeta de arquitectura real detectada tras instalar TinyTeX
 function actualizarRutaVSCode() {
   const binDir = resolverBinDirLocal();
   if (!binDir) return;
 
-  // Ruta relativa al workspace, con el mismo prefijo %WORKSPACE_FOLDER%
-  // que ya usa latex-workshop.latex.rootFile.path en este repo.
+  // Ruta relativa al workspace, con el mismo prefijo %WORKSPACE_FOLDER%  que ya usa latex-workshop.latex.rootFile.path en este repo.
   const rutaRelativa = binDir.slice(REPO_ROOT.length + 1); // quita "REPO_ROOT/"
   const rutaVSCode = `%WORKSPACE_FOLDER%/${rutaRelativa}`;
 
@@ -173,12 +158,6 @@ async function instalarPaquetes() {
 
   await ejecutar([tlmgr, "update", "--self"]);
 
-  // Se instala paquete por paquete en vez de en un solo comando: tlmgr
-  // aborta el proceso completo con exit code 1 si UN SOLO paquete de la
-  // lista no existe en el repositorio (ej. nombres que cambiaron o se
-  // fusionaron entre versiones de TeX Live), incluso si ya instalo
-  // exitosamente el resto. Instalando de a uno, un paquete no disponible
-  // se reporta y se salta sin tumbar los demas.
   const fallidos: string[] = [];
   for (const paquete of PAQUETES) {
     try {

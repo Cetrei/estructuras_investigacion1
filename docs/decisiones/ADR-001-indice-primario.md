@@ -1,4 +1,4 @@
-# ADR 001: Indice primario mediante arreglo ordenado con zona de desborde
+# ADR 001: Mapa de posiciones por carne mediante arreglo ordenado con lista de recien ingresados
 
 ## Status
 Accepted
@@ -13,41 +13,46 @@ nuevo obliga a correr de lugar a todos los que quedan despues de el en el
 orden.
 
 ## Decision
-Se divide el indice primario en dos partes:
+Se divide el mapa de posiciones por carne en dos partes:
 
-Zona primaria: arreglo ordenado por carne. Aqui se busca con busqueda
+Zona ordenada: arreglo ordenado por carne. Aqui se busca con busqueda
 binaria, en O(log n).
 
-Zona de desborde: arreglo sin ordenar, mas pequeno, donde se agregan los
-carnes de los estudiantes recien registrados. Agregar un elemento al final
-de este arreglo cuesta O(1), porque no hay que mover nada mas.
+Lista de recien ingresados: arreglo sin ordenar, mas pequeno, donde se
+agregan los carnes de los estudiantes recien registrados. Agregar un
+elemento al final de este arreglo cuesta O(1), porque no hay que mover
+nada mas.
 
-Cuando se busca un carne, primero se revisa la zona primaria con busqueda
-binaria. Si no aparece ahi, se revisa la zona de desborde de principio a
-fin, comparando carne por carne, hasta encontrarlo o terminar el arreglo.
-Como la zona de desborde se mantiene pequena (ver siguiente parrafo), ese
-recorrido cuesta poco en la practica aunque sea lineal.
+Cuando se busca un carne, primero se revisa la zona ordenada con busqueda
+binaria. Si no aparece ahi, se revisa la lista de recien ingresados de
+principio a fin, comparando carne por carne, hasta encontrarlo o terminar
+el arreglo. Como esa lista se mantiene pequena (ver siguiente parrafo),
+ese recorrido cuesta poco en la practica aunque sea lineal.
 
-Cuando la zona de desborde llega al 10% del tamano de la zona primaria, se
-juntan las dos zonas en una sola, ya ordenada, y la zona de desborde queda
-vacia otra vez vacia. Este proceso de juntar y ordenar cuesta O(n log n), y
-se explica con mas detalle en el ADR 004 junto con lo que pasa al apagar el
-sistema, que es un momento distinto y no dispara este mismo proceso.
+Cuando la lista de recien ingresados llega al 10% del tamano de la zona
+ordenada, se juntan ambas partes en una sola, ya ordenada, y la lista
+queda vacia otra vez. Este proceso de juntar y ordenar cuesta O(n log n),
+y se explica con mas detalle en el ADR 004 junto con lo que pasa al
+apagar el sistema, que es un momento distinto y no dispara este mismo
+proceso.
 
-Este patron replica como funcionaban los archivos ISAM (IBM) antes de que
-los arboles B/B+ se volvieran el estandar en los motores de bases de
-datos. La seccion de arquitectura del informe explica con mas detalle en
-que consiste ISAM y por que se eligio ese patron en lugar de un arbol.
+Este patron replica como funcionaban los archivos ISAM (Indexed
+Sequential Access Method, IBM) antes de que los arboles B/B+ se volvieran
+el estandar en los motores de bases de datos. La seccion de arquitectura
+del informe explica con mas detalle en que consiste ISAM y por que se
+eligio ese patron en lugar de un arbol. (TODO: agregar cita
+bibliografica formal sobre ISAM tanto ahi como en referencias.bib.)
 
 ## Consequences
 Registrar un estudiante nuevo cuesta O(1) la mayoria de las veces, en vez
 de O(n) cada vez.
 
-Juntar las dos zonas ocurre pocas veces (solo cuando el desborde llega al
-10%), asi que aunque cada vez que ocurre cuesta O(n log n), en promedio no
-sale caro porque no pasa en cada registro nuevo.
+Juntar las dos partes ocurre pocas veces (solo cuando la lista de recien
+ingresados llega al 10%), asi que aunque cada vez que ocurre cuesta
+O(n log n), en promedio no sale caro porque no pasa en cada registro
+nuevo.
 
-El indice completo, con sus dos zonas, se guarda en el archivo
+El mapa completo, con sus dos partes, se guarda en el archivo
 estudiantes.idx para no tener que reconstruirlo desde cero cada vez que se
 enciende el sistema.
 
