@@ -1,0 +1,14 @@
+\begin{lstlisting}[style=pseudocodigo]
+funcion buscarEstudiantesPorApellido(apellido):
+    si indiceApellido.desactualizado:
+        indiceApellido = construirIndiceSecundario(APELLIDO)
+
+    posiciones = buscarEnIndiceSecundario(indiceApellido, apellido)
+
+    resultados = listaVacia()
+    para cada posicion en posiciones:
+        identidad = leerRegistroEnOffset(identidad.dat, posicion)
+        agregar(resultados, identidad)
+
+    retornar resultados
+\end{lstlisting}

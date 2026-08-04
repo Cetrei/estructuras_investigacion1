@@ -1,0 +1,27 @@
+\begin{lstlisting}[style=pseudocodigo]
+funcion purgarInactivos():
+    crear identidadTemp.dat, academicoTemp.dat, contactoTemp.dat
+
+    para cada posicion desde 0 hasta contarRegistros() - 1:
+        academico = leerRegistroEnOffset(academico.dat, posicion)
+
+        si academico.estado == 1:
+            identidad = leerRegistroEnOffset(identidad.dat, posicion)
+            contacto  = leerRegistroEnOffset(contacto.dat, posicion)
+            agregarRegistroAlFinal(identidadTemp.dat, identidad)
+            agregarRegistroAlFinal(academicoTemp.dat, academico)
+            agregarRegistroAlFinal(contactoTemp.dat, contacto)
+        // si estado es 0, el registro se descarta y no pasa al archivo nuevo
+
+    reemplazarArchivo(identidad.dat, identidadTemp.dat)
+    reemplazarArchivo(academico.dat, academicoTemp.dat)
+    reemplazarArchivo(contacto.dat, contactoTemp.dat)
+
+    // las posiciones cambiaron: reconstruir los tres indices desde cero,
+    // no se puede reutilizar la zona de altas nuevas anterior (ver ADR 004)
+    indicePrimario = reconstruirIndice(identidad.dat, CARNE)
+    indiceIdentificacion = reconstruirIndice(identidad.dat, IDENTIFICACION)
+    indiceApellido = reconstruirIndice(identidad.dat, APELLIDO)
+
+    retornar EXITO
+\end{lstlisting}

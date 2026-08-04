@@ -1,0 +1,15 @@
+\begin{lstlisting}[style=pseudocodigo]
+funcion eliminarEstudianteLogico(carne):
+    posicion = buscarEnIndicePrimario(carne)
+
+    si posicion == NO_ENCONTRADO:
+        retornar ERROR
+
+    marcarInactivoEnIndice(carne)
+
+    academico = leerRegistroEnOffset(academico.dat, posicion)
+    academico.estado = 0
+    escribirRegistroEnOffset(academico.dat, posicion, academico)
+
+    retornar EXITO
+\end{lstlisting}

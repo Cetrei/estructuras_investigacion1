@@ -1,0 +1,17 @@
+\begin{lstlisting}[style=pseudocodigo]
+funcion registrarEstudiante(datos):
+    si no validarFormato(datos):
+        retornar ERROR
+
+    posicion = buscarEspacioLibre()
+    si posicion == NO_HAY_ESPACIO:
+        posicion = expandirVector()
+
+    escribirRegistroEnOffset(identidad.dat, posicion, datos.identidad)
+    escribirRegistroEnOffset(academico.dat, posicion, datos.academico)
+    escribirRegistroEnOffset(contacto.dat, posicion, datos.contacto)
+
+    insertarEnIndicePrimario(datos.carne, posicion)
+
+    retornar EXITO
+\end{lstlisting}

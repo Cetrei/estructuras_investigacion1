@@ -1,0 +1,13 @@
+\begin{lstlisting}[style=pseudocodigo]
+funcion buscarEstudiantePorCarne(carne):
+    posicion = buscarEnIndicePrimario(carne)
+
+    si posicion == NO_ENCONTRADO:
+        retornar NO_ENCONTRADO
+
+    identidad = leerRegistroEnOffset(identidad.dat, posicion)
+    academico = leerRegistroEnOffset(academico.dat, posicion)
+    contacto  = leerRegistroEnOffset(contacto.dat, posicion)
+
+    retornar ensamblarEstudiante(identidad, academico, contacto)
+\end{lstlisting}
