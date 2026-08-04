@@ -1,5 +1,4 @@
-import { existsSync, readdirSync, copyFileSync, mkdirSync } from "node:fs";
-import { readFileSync } from "node:fs";
+import { existsSync, readdirSync, copyFileSync, mkdirSync, readFileSync } from "node:fs";
 import { load as parseYaml } from "js-yaml";
 
 const REPO_ROOT = `${import.meta.dir}/..`;
@@ -14,7 +13,14 @@ interface Config {
   };
 }
 
-function esWindows() {
+interface EntornoCompilacion {
+  env: NodeJS.ProcessEnv;
+  latex: string;
+  binDir: string | null;
+  jobname: string;
+}
+
+function esWindows(): boolean {
   return process.platform === "win32";
 }
 
@@ -35,11 +41,7 @@ function leerConfig(): Config {
   return config;
 }
 
-// latexmk usa el jobname como nombre de archivo directamente, asi que
-// caracteres invalidos en filesystems (# / \ : * ? " < > |) y espacios
-// se sanean a guiones para evitar problemas entre distintos sistemas.
-// El nombre "bonito" en config.yml (ej. "Investigacion #1") queda intacto,
-// solo se sanea la version usada como nombre de archivo.
+// Se deben quitar caracteres invalidos para evitar que latexmk falle por usar el jobname directo
 function sanearNombreArchivo(nombre: string): string {
   return nombre
     .trim()
@@ -51,7 +53,7 @@ function sanearNombreArchivo(nombre: string): string {
 /* TinyTeX instala los binarios dentro de .texlive/.TinyTeX/bin/<arch>/,
  * donde <arch> varia segun el sistema (windows, x86_64-linux, universal-darwin).
  * Buscamos la primera carpeta que exista ahi adentro.
-*/
+ */
 function resolverBinDirLocal(): string | null {
   if (!existsSync(TEXLIVE_DIR)) return null;
   const carpetas = readdirSync(TEXLIVE_DIR);
@@ -59,8 +61,7 @@ function resolverBinDirLocal(): string | null {
   return `${TEXLIVE_DIR}/${carpetas[0]}`;
 }
 
-function resolverLatexmk(): string {
-  const binDirLocal = resolverBinDirLocal();
+function resolverLatexmk(binDirLocal: string | null): string {
   if (binDirLocal) {
     const ejecutable = esWindows() ? "latexmk.exe" : "latexmk";
     const rutaCompleta = `${binDirLocal}/${ejecutable}`;
@@ -73,46 +74,43 @@ function resolverLatexmk(): string {
   return "latexmk";
 }
 
-async function main() {
-  const config = leerConfig();
-  const jobname = sanearNombreArchivo(config.informe.nombre);
+function construirEnv(binDir: string | null): NodeJS.ProcessEnv {
+  if (!binDir) return process.env;
+  const separador = esWindows() ? ";" : ":";
+  return { ...process.env, PATH: `${binDir}${separador}${process.env.PATH ?? ""}` };
+}
 
-  console.log(`Compilando informe/main.tex como '${jobname}.pdf'...`);
+function armarEntorno(config: Config): EntornoCompilacion {
+  const binDir = resolverBinDirLocal();
+  return {
+    binDir,
+    latex: resolverLatexmk(binDir),
+    env: construirEnv(binDir),
+    jobname: sanearNombreArchivo(config.informe.nombre),
+  };
+}
 
-  const latexmk = resolverLatexmk();
-  const binDirLocal = resolverBinDirLocal();
-
-  const env = binDirLocal
-    ? {
-        ...process.env,
-        PATH: `${binDirLocal}${esWindows() ? ";" : ":"}${process.env.PATH ?? ""}`,
-      }
-    : process.env;
-
-  // Si un build previo fallo a mitad de camino, latexmk puede quedar
-  // convencido de que el PDF ya esta al dia (revisa el .fdb_latexmk, no si
-  // el PDF realmente compilo bien) y no vuelve a correr pdflatex, aunque el
-  // error de fondo siga sin resolverse. Se limpia el estado de latexmk
-  // antes de cada build para forzar una recompilacion completa.
-  const limpieza = Bun.spawnSync([latexmk, "-C", `-jobname=${jobname}`, "main.tex"], {
+async function limpiarBuild(entorno: EntornoCompilacion) {
+  const limpieza = Bun.spawnSync([entorno.latex, "-C", `-jobname=${entorno.jobname}`, "main.tex"], {
     cwd: INFORME_DIR,
     stdout: "ignore",
     stderr: "ignore",
-    env,
+    env: entorno.env,
   });
   if (!limpieza.success) {
     console.warn("Aviso: no se pudo limpiar el estado previo de latexmk, se continua igual.");
   }
+}
 
-  let proceso;
+function lanzarLatexmk(entorno: EntornoCompilacion) {
   try {
-    proceso = Bun.spawn([latexmk, "-pdf", `-jobname=${jobname}`, "main.tex"], {
+    return Bun.spawn([entorno.latex, "-pdf", `-jobname=${entorno.jobname}`, "main.tex"], {
       cwd: INFORME_DIR,
       stdout: "inherit",
       stderr: "inherit",
-      env,
+      env: entorno.env,
     });
-  } catch (error) {
+  } catch {
     console.error("No se encontro latexmk (ni local ni en el PATH del sistema).");
     console.error("");
     console.error("Opcion recomendada: instalar LaTeX local al repo:");
@@ -121,17 +119,9 @@ async function main() {
     console.error("Ver CONTRIBUTING.md para el detalle completo.");
     process.exit(1);
   }
+}
 
-  const codigoSalida = await proceso.exited;
-
-  if (codigoSalida !== 0) {
-    console.error(`latexmk termino con codigo ${codigoSalida}`);
-    process.exit(codigoSalida);
-  }
-
-  // Copiar el PDF resultante al outputDir configurado (por defecto la raiz
-  // del repo). El PDF real de trabajo queda en informe/ igual, esto es
-  // ademas una copia "de entrega" facil de encontrar.
+function copiarPdfAOutput(config: Config, jobname: string) {
   const pdfGenerado = `${INFORME_DIR}/${jobname}.pdf`;
   const outputDir = `${REPO_ROOT}/${config.informe.outputDir}`;
   const pdfDestino = `${outputDir}/${jobname}.pdf`;
@@ -144,6 +134,26 @@ async function main() {
   console.log("");
   console.log(`Listo. PDF generado en informe/${jobname}.pdf`);
   console.log(`Copia de entrega en ${config.informe.outputDir}/${jobname}.pdf`);
+}
+
+async function main() {
+  const config = leerConfig();
+  const entorno = armarEntorno(config);
+
+  console.log(`Compilando informe/main.tex como '${entorno.jobname}.pdf'...`);
+
+  // Si un build previo fallo a mitad de camino, latexmk puede quedar convencido de que el PDF ya esta al dia
+  await limpiarBuild(entorno);
+
+  const proceso = lanzarLatexmk(entorno);
+  const codigoSalida = await proceso.exited;
+
+  if (codigoSalida !== 0) {
+    console.error(`latexmk termino con codigo ${codigoSalida}`);
+    process.exit(codigoSalida);
+  }
+
+  copiarPdfAOutput(config, entorno.jobname);
 }
 
 main();
