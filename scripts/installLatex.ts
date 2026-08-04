@@ -32,11 +32,12 @@
 //   trimspaces, comment, bigfoot, totpages, ifmtarg -> dependencias
 //   transitivas comunes de apa7/biblatex
 
-import { existsSync, mkdirSync, readdirSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 
 const REPO_ROOT = `${import.meta.dir}/..`;
 const TEXLIVE_DIR = `${REPO_ROOT}/.texlive`;
 const TINYTEX_ROOT = `${TEXLIVE_DIR}/.TinyTeX`; // TinyTeX siempre crea esta subcarpeta
+const VSCODE_SETTINGS_PATH = `${REPO_ROOT}/.vscode/settings.json`;
 
 const PAQUETES = [
   "apa7",
@@ -127,6 +128,38 @@ function resolverBinDirLocal(): string | null {
   return `${binBase}/${carpetas[0]}`;
 }
 
+// Actualiza latex-workshop.latex.path en .vscode/settings.json con la
+// carpeta de arquitectura real detectada tras instalar TinyTeX (varia por
+// SO: x86_64-linux, windows, universal-darwin), sin tocar el resto de las
+// claves que ya haya en el archivo (ltex.language, rootFile.path, etc).
+// Este setting es especifico de la maquina de cada quien, pero se escribe
+// automaticamente asi nadie tiene que editarlo a mano.
+function actualizarRutaVSCode() {
+  const binDir = resolverBinDirLocal();
+  if (!binDir) return;
+
+  // Ruta relativa al workspace, con el mismo prefijo %WORKSPACE_FOLDER%
+  // que ya usa latex-workshop.latex.rootFile.path en este repo.
+  const rutaRelativa = binDir.slice(REPO_ROOT.length + 1); // quita "REPO_ROOT/"
+  const rutaVSCode = `%WORKSPACE_FOLDER%/${rutaRelativa}`;
+
+  let settings: Record<string, unknown> = {};
+  if (existsSync(VSCODE_SETTINGS_PATH)) {
+    try {
+      settings = JSON.parse(readFileSync(VSCODE_SETTINGS_PATH, "utf-8"));
+    } catch {
+      console.warn("Aviso: .vscode/settings.json no es JSON valido, no se actualiza la ruta de LaTeX.");
+      return;
+    }
+  } else {
+    mkdirSync(`${REPO_ROOT}/.vscode`, { recursive: true });
+  }
+
+  settings["latex-workshop.latex.path"] = rutaVSCode;
+  writeFileSync(VSCODE_SETTINGS_PATH, `${JSON.stringify(settings, null, 4)}\n`);
+  console.log(`Actualizado .vscode/settings.json con latex-workshop.latex.path = ${rutaVSCode}`);
+}
+
 async function instalarPaquetes() {
   console.log("Instalando paquetes LaTeX necesarios...");
   const binDir = resolverBinDirLocal();
@@ -175,6 +208,7 @@ async function main() {
   }
 
   await instalarPaquetes();
+  actualizarRutaVSCode();
 
   console.log("");
   console.log("Listo. LaTeX local instalado en .texlive/.TinyTeX/");
