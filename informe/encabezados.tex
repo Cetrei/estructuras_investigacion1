@@ -1,0 +1,19 @@
+% Configuracion centralizada de niveles de encabezado (h1-h5).
+%
+% apa7.cls YA formatea \section, \subsection, \subsubsection, \paragraph
+% y \subparagraph segun las reglas de APA 7 de forma nativa y correcta:
+%   h1 \section       -> centrado, negrita, mayus/minus
+%   h2 \subsection    -> alineado izquierda, negrita, mayus/minus
+%   h3 \subsubsection -> alineado izquierda, negrita cursiva, mayus/minus
+%   h4 \paragraph     -> con sangria, negrita, termina en punto, texto sigue en la misma linea
+%   h5 \subparagraph  -> con sangria, negrita cursiva, termina en punto, texto sigue en la misma linea
+%
+% NO tocar el formato de estos comandos con paquetes como titlesec: eso
+% pisaria el comportamiento nativo de apa7.cls, que ya es compliant con el
+% manual oficial (ver informe/formato.tex para el resto de paquetes usados).
+%
+% Si en el futuro hace falta AJUSTAR algo puntual (espaciado extra entre
+% secciones, tamano de fuente especifico, etc.), centralizar esos cambios
+% aqui usando \titlespacing o redefiniendo el comando puntual, en vez de
+% hacerlo directo en cada archivo de seccion. Este archivo esta vacio por
+% ahora a proposito: el formato nativo de apa7.cls no requiere overrides.
