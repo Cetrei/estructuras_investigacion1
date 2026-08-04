@@ -1,0 +1,12 @@
+# Configuracion del build del informe.
+# Editar aqui en vez de tocar scripts/buildPDF.ts directamente.
+
+informe:
+  # Nombre "de exhibicion" del proyecto. Se usa para nombrar el PDF final.
+  # Caracteres invalidos en nombres de archivo (# / \ : * ? " < > |) se
+  # sanean automaticamente al construir el nombre real (ver buildPDF.ts).
+  nombre: "Investigacion #1"
+
+  # Carpeta donde se copia el PDF final, relativa a la raiz del repo.
+  # "." significa la raiz del repo.
+  outputDir: "."
