@@ -33,3 +33,16 @@
 \usepackage[style=apa, backend=biber]{biblatex}
 \DeclareLanguageMapping{spanish}{spanish-apa}
 \addbibresource{referencias.bib}
+
+% Logo institucional en el header de cada pagina (esquina superior derecha).
+% apa7.cls en modo stu ya usa fancyhdr internamente para el numero de
+% pagina (pagestyle 'apastyle' / 'fancy', segun version); se agrega el logo
+% ahi sin tocar el numero de pagina que ya funciona nativo. Colocar el
+% archivo real en informe/assets/logo-una.png (ver informe/assets/README.md).
+\IfFileExists{assets/logo-una.png}{%
+    \fancyhead[R]{\includegraphics[height=1cm]{assets/logo-una.png}}%
+}{}%
+
+% Punto centralizado para overrides de encabezados (h1-h5). Ver ese archivo
+% para por que esta vacio por defecto.
+\input{encabezados}
