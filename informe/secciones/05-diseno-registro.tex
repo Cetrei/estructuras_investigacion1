@@ -1,0 +1,86 @@
+% !TEX root = ../main.tex
+\section{Diseño del registro Estudiante}
+
+El enunciado de la investigación pide administrar trece datos por
+estudiante: número de carné, identificación, nombre, apellidos, fecha de
+nacimiento, sexo, carrera, nivel académico, correo electrónico, número
+telefónico, dirección, cantidad de créditos aprobados y promedio general,
+además del estado del estudiante. El enunciado no propone ninguna forma de
+organizar estos datos, solo los enumera como requisitos que el sistema
+debe guardar.
+
+El primer intento del equipo fue juntar los trece campos en un único
+registro. Al revisarlo con cuidado apareció un problema: esos trece campos
+no cambian con la misma frecuencia ni se usan juntos en las mismas
+operaciones. El nombre y la fecha de nacimiento de un estudiante casi
+nunca cambian una vez matriculado. El promedio y los créditos aprobados se
+actualizan varias veces durante la carrera del estudiante, cada período
+lectivo. El correo, el teléfono y la dirección se consultan juntos
+normalmente solo cuando hace falta contactar al estudiante, y casi nunca
+al mismo tiempo que se actualiza el promedio.
+
+Juntar estos tres grupos en un solo registro significa que actualizar el
+promedio de un estudiante, algo que ocurre constantemente, obliga también
+a leer y reescribir su nombre, su fecha de nacimiento, su correo y su
+dirección, aunque ninguno de esos datos haya cambiado.
+
+Por esa razón se decidió dividir el registro en tres structs
+independientes, cada uno guardado en su propio archivo binario
+(\texttt{identidad.dat}, \texttt{academico.dat}, \texttt{contacto.dat}).
+El criterio de separación es la frecuencia y el patrón de uso de cada
+grupo de campos, no una división arbitraria. Esta técnica se conoce como
+particionamiento vertical y es la misma que aplican los motores de bases
+de datos relacionales cuando separan columnas de una entidad lógica en
+tablas físicas distintas por razones de rendimiento.
+
+Los tres structs se mantienen alineados por posición: el registro en la
+posición $i$ de \texttt{identidad.dat} corresponde al mismo estudiante que
+el registro en la posición $i$ de \texttt{academico.dat} y de
+\texttt{contacto.dat}. Gracias a esto, un único índice (carné apuntando a
+posición) basta para ubicar al estudiante en cualquiera de los tres
+archivos, sin necesidad de tres índices repetidos.
+
+\subsection{IdentidadEstudiante}
+Datos que identifican al estudiante como persona: carné, identificación,
+nombre, apellidos, fecha de nacimiento y sexo.
+
+\begin{lstlisting}[style=pseudocodigo]
+typedef struct {
+    int carne;
+    char identificacion[13];
+    TipoIdentificacion tipoIdentificacion;
+    char nombre[21];
+    char apellido1[21];
+    char apellido2[21];
+    Fecha fechaNacimiento;
+    int sexo;
+} IdentidadEstudiante;
+\end{lstlisting}
+
+\subsection{AcademicoEstudiante}
+Datos de la situación académica actual del estudiante, que cambian cada
+período lectivo.
+
+\begin{lstlisting}[style=pseudocodigo]
+typedef struct {
+    int carne;
+    int carrera;
+    int nivelAcademico;
+    int creditosAprobados;
+    float promedio;
+    int estado;
+} AcademicoEstudiante;
+\end{lstlisting}
+
+\subsection{ContactoEstudiante}
+Datos usados para comunicarse con el estudiante, que cambian con poca
+frecuencia.
+
+\begin{lstlisting}[style=pseudocodigo]
+typedef struct {
+    int carne;
+    char correo[41];
+    char telefono[9];
+    char direccion[81];
+} ContactoEstudiante;
+\end{lstlisting}

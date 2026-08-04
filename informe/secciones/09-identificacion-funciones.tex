@@ -1,0 +1,69 @@
+% !TEX root = ../main.tex
+\section{Identificación de todas las funciones necesarias}
+
+\subsection{Módulo archivo (persistencia cruda)}
+\begin{longtable}{p{6cm} p{9cm}}
+\toprule
+Función & Entrada $\rightarrow$ Salida \\
+\midrule
+\endhead
+abrirArchivo(nombre, modo) & nombre, modo $\rightarrow$ FILE* \\
+cerrarArchivo(fp) & FILE* $\rightarrow$ void \\
+calcularOffset(posicion, tamRegistro) & posición, tamaño $\rightarrow$ offset en bytes \\
+leerRegistroEnOffset(fp, offset, destino) & offset $\rightarrow$ registro leído \\
+escribirRegistroEnOffset(fp, offset, registro) & offset, registro $\rightarrow$ éxito o error \\
+agregarRegistroAlFinal(fp, registro) & registro $\rightarrow$ offset asignado \\
+contarRegistros(fp, tamRegistro) & sin entrada $\rightarrow$ cantidad total \\
+\bottomrule
+\end{longtable}
+
+\subsection{Módulo índice (RAM)}
+\begin{longtable}{p{6cm} p{9cm}}
+\toprule
+Función & Entrada $\rightarrow$ Salida \\
+\midrule
+\endhead
+construirIndicePrimario() & sin entrada $\rightarrow$ índice cargado desde disco \\
+buscarEnIndicePrimario(carne) & carné $\rightarrow$ posición o "no encontrado" \\
+insertarEnIndicePrimario(carne, posicion) & carné, posición $\rightarrow$ éxito \\
+reorganizarIndicePrimario() & sin entrada $\rightarrow$ índice con zona primaria y zona de altas nuevas fusionadas \\
+marcarInactivoEnIndice(carne) & carné $\rightarrow$ éxito \\
+construirIndiceSecundario(campo) & campo $\rightarrow$ índice ordenado por ese campo \\
+buscarEnIndiceSecundario(campo, valor) & valor $\rightarrow$ lista de posiciones \\
+persistirIndices() & sin entrada $\rightarrow$ índices guardados en \texttt{.idx} \\
+\bottomrule
+\end{longtable}
+
+\subsection{Módulo estudiante (lógica de negocio)}
+\begin{longtable}{p{6cm} p{9cm}}
+\toprule
+Función & Entrada $\rightarrow$ Salida \\
+\midrule
+\endhead
+registrarEstudiante(datos) & datos completos $\rightarrow$ éxito \\
+buscarEstudiantePorCarne(carne) & carné $\rightarrow$ estudiante \\
+buscarEstudiantePorIdentificacion(id) & identificación $\rightarrow$ estudiante \\
+buscarEstudiantesPorApellido(apellido) & apellido $\rightarrow$ lista de estudiantes \\
+modificarEstudiante(carne, nuevosDatos) & carné, datos $\rightarrow$ éxito \\
+eliminarEstudianteLogico(carne) & carné $\rightarrow$ éxito \\
+mostrarTodosLosEstudiantes() & sin entrada $\rightarrow$ recorrido completo \\
+mostrarEstudiantesPorCarrera(carrera) & carrera $\rightarrow$ lista \\
+actualizarPromedio(carne, promedio) & carné, valor $\rightarrow$ éxito \\
+actualizarCreditosAprobados(carne, creditos) & carné, valor $\rightarrow$ éxito \\
+consultarExpedienteCompleto(carne) & carné $\rightarrow$ identidad más académico más contacto \\
+\bottomrule
+\end{longtable}
+
+\subsection{Módulo reportes (agregados y mantenimiento)}
+\begin{longtable}{p{6cm} p{9cm}}
+\toprule
+Función & Entrada $\rightarrow$ Salida \\
+\midrule
+\endhead
+calcularPromedioInstitucional() & sin entrada $\rightarrow$ promedio \\
+encontrarMayorPromedio() & sin entrada $\rightarrow$ estudiante \\
+encontrarMayorCreditos() & sin entrada $\rightarrow$ estudiante \\
+generarReporteEstadistico() & sin entrada $\rightarrow$ resumen \\
+purgarInactivos() & sin entrada $\rightarrow$ archivo reconstruido sin registros con estado en cero \\
+\bottomrule
+\end{longtable}

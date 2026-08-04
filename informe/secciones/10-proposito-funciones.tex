@@ -1,0 +1,32 @@
+% !TEX root = ../main.tex
+\section{Descripción del propósito de cada función}
+
+\begin{longtable}{p{5.5cm} p{9.5cm}}
+\toprule
+Función & Propósito \\
+\midrule
+\endhead
+registrarEstudiante & Agrega un nuevo estudiante: escribe su registro en los tres archivos y lo incorpora al índice. \\
+buscarEstudiantePorCarne & Recupera el expediente (identidad, académico y contacto) a partir del carné. \\
+buscarEstudiantePorIdentificacion & Igual que la anterior, pero usando el número de identificación como llave. \\
+buscarEstudiantesPorApellido & Recupera todos los estudiantes que comparten un apellido dado. \\
+modificarEstudiante & Sobrescribe los campos de un estudiante existente, sin cambiar su posición ni su carné. \\
+eliminarEstudianteLogico & Marca a un estudiante como inactivo sin borrar físicamente su registro. \\
+mostrarTodosLosEstudiantes & Recorre y despliega el listado completo de estudiantes activos. \\
+mostrarEstudiantesPorCarrera & Filtra y despliega los estudiantes de una carrera específica. \\
+actualizarPromedio & Recalcula y guarda el promedio general de un estudiante. \\
+actualizarCreditosAprobados & Recalcula y guarda la cantidad de créditos aprobados de un estudiante. \\
+consultarExpedienteCompleto & Reúne los tres registros (identidad, académico, contacto) de un mismo estudiante. \\
+calcularPromedioInstitucional & Calcula el promedio general de toda la población estudiantil activa. \\
+encontrarMayorPromedio & Ubica al estudiante con el promedio más alto. \\
+encontrarMayorCreditos & Ubica al estudiante con más créditos aprobados. \\
+generarReporteEstadistico & Produce un resumen agregado (totales por carrera, nivel, etc.). \\
+purgarInactivos & Reconstruye el archivo físico eliminando de forma definitiva los registros marcados como inactivos. \\
+construirIndicePrimario & Carga o reconstruye el índice de carné en memoria al iniciar el sistema. \\
+buscarEnIndicePrimario & Ubica, dentro del índice, la posición de un registro a partir de su carné. \\
+insertarEnIndicePrimario & Agrega una nueva entrada al índice sin reordenar la zona primaria. \\
+reorganizarIndicePrimario & Junta la zona de altas nuevas con la zona primaria y la deja ordenada de nuevo. \\
+construirIndiceSecundario & Genera un índice ordenado por un campo distinto al carné (identificación o apellido). \\
+buscarEnIndiceSecundario & Ubica una o varias posiciones a partir de un valor de un campo secundario. \\
+\bottomrule
+\end{longtable}

@@ -1,0 +1,186 @@
+% !TEX root = ../main.tex
+\section{Análisis del costo computacional de cada función}
+
+El análisis siguiente reporta dos cosas para cada función: la clase
+asintótica (notación Big O) y el costo temporal real que esa clase
+esconde. Esta distinción importa porque una función puede clasificarse
+como $O(n)$ y aun así estar ejecutando, por ejemplo, $n + \log n$ o $3n$
+operaciones reales. La notación Big O descarta constantes y términos de
+menor orden, pero esas operaciones se siguen ejecutando en la práctica.
+Cuando una función combina dos algoritmos, por ejemplo una búsqueda en
+índice seguida de una lectura en disco, el costo real es la suma de
+ambos, no solo el término dominante.
+
+Además del costo temporal, se documenta el costo espacial: cuánta memoria
+adicional usa cada función más allá de los datos que ya existen en el
+sistema, por ejemplo un acumulador, un arreglo temporal, o ninguna
+memoria extra.
+
+\subsection{Módulo índice}
+
+\begin{longtable}{p{3.6cm} p{3.4cm} p{2.6cm} p{2cm} p{2.7cm}}
+\toprule
+Función & Algoritmo & Costo temporal real & Big O & Costo espacial \\
+\midrule
+\endhead
+buscarEnIndicePrimario &
+Binaria en zona primaria, lineal en zona de altas nuevas si no hay
+coincidencia &
+$\log n + k$ &
+$O(\log n) + O(k)$ &
+$O(1)$, sin estructuras auxiliares \\
+insertarEnIndicePrimario &
+Inserción al final del arreglo de altas nuevas &
+$1$ operación (amortizado) &
+$O(1)$ amortizado &
+$O(1)$ \\
+reorganizarIndicePrimario &
+Mezcla ordenada de zona primaria ($n$) y zona de altas nuevas ($k$) &
+$(n+k)\log(n+k)$ &
+$O(n \log n)$ &
+$O(n+k)$, arreglo temporal para la mezcla \\
+buscarEnIndiceSecundario &
+Binaria en zona primaria, lineal en zona de altas nuevas &
+$\log n + k$ &
+$O(\log n) + O(k)$ &
+$O(1)$ \\
+construirIndiceSecundario (apellido) &
+Copia de $n$ llaves más ordenamiento &
+$n + n\log n$ &
+$O(n \log n)$ &
+$O(n)$, arreglo nuevo del tamaño del índice \\
+\bottomrule
+\end{longtable}
+
+La fila de \texttt{reorganizarIndicePrimario} ilustra por qué reportar
+solo $O(n \log n)$ no basta: el costo real es $(n+k)\log(n+k)$, y aunque
+$k$ es pequeño frente a $n$ (acotado al 10\% de la zona primaria, ADR 001),
+sigue sumando trabajo real en cada reorganización. No desaparece por ser
+un término de menor orden.
+
+\subsection{Módulo archivo (persistencia)}
+
+\begin{longtable}{p{3.6cm} p{3.4cm} p{2.6cm} p{2cm} p{2.7cm}}
+\toprule
+Función & Algoritmo & Costo temporal real & Big O & Costo espacial \\
+\midrule
+\endhead
+leerRegistroEnOffset &
+\texttt{fseek} más \texttt{fread} de un registro de tamaño fijo &
+$1$ operación de entrada/salida &
+$O(1)$ &
+$O(1)$, un solo struct en RAM \\
+escribirRegistroEnOffset &
+\texttt{fseek} más \texttt{fwrite} de un registro de tamaño fijo &
+$1$ operación de entrada/salida &
+$O(1)$ &
+$O(1)$ \\
+purgarInactivos &
+Recorrido secuencial de $n$ registros, reescritura de los activos
+($a \leq n$) y reconstrucción de 3 índices &
+$n + a + n\log n$ &
+$O(n \log n)$ &
+$O(n)$, archivo temporal más índices reconstruidos \\
+\bottomrule
+\end{longtable}
+
+\subsection{Módulo estudiante (lógica de negocio)}
+
+\begin{longtable}{p{3.6cm} p{3.4cm} p{2.6cm} p{2cm} p{2.7cm}}
+\toprule
+Función & Algoritmo & Costo temporal real & Big O & Costo espacial \\
+\midrule
+\endhead
+registrarEstudiante &
+Inserción en índice más escritura de 3 registros de tamaño fijo &
+$1 + 3$ &
+$O(1)$ amortizado &
+$O(1)$ \\
+buscarEstudiantePorCarne &
+Búsqueda en índice más 1 lectura en offset &
+$\log n + 1$ &
+$O(\log n)$ &
+$O(1)$ \\
+buscarEstudiantesPorApellido &
+Búsqueda en índice de apellido más $k$ lecturas de coincidencias &
+$\log n + k$ &
+$O(\log n) + O(k)$ &
+$O(k)$, lista de resultados \\
+modificarEstudiante &
+Búsqueda en índice más escritura en offset existente &
+$\log n + 1$ &
+$O(\log n)$ &
+$O(1)$ \\
+eliminarEstudianteLogico &
+Búsqueda en índice más marcar \texttt{estado = 0} en índice y archivo &
+$\log n + 2$ &
+$O(\log n)$ &
+$O(1)$ \\
+consultarExpedienteCompleto &
+Búsqueda en índice más 3 lecturas (identidad, académico, contacto) &
+$\log n + 3$ &
+$O(\log n)$ &
+$O(1)$ \\
+mostrarTodosLosEstudiantes &
+Recorrido secuencial completo &
+$n$ &
+$O(n)$ &
+$O(1)$ si se muestra en streaming, $O(n)$ si se acumula todo antes de
+mostrar \\
+mostrarEstudiantesPorCarrera &
+Recorrido secuencial con filtro &
+$n$ comparaciones &
+$O(n)$ &
+$O(r)$, $r$ es la cantidad de resultados de esa carrera \\
+actualizarPromedio / actualizarCreditosAprobados &
+Búsqueda en índice más escritura en \texttt{academico.dat} &
+$\log n + 1$ &
+$O(\log n)$ &
+$O(1)$ \\
+\bottomrule
+\end{longtable}
+
+No se justifica un índice propio para \texttt{mostrarEstudiantesPorCarrera}:
+con aproximadamente 50 carreras, un índice adicional pagaría su propio
+costo de mantenimiento (inserción, zona de altas nuevas, reorganización)
+por una operación que ya es $O(n)$ y donde $n$ son los mismos 25\,000 a
+un millón de registros que cualquier reporte necesita tocar de todas
+formas.
+
+\subsection{Módulo reportes (agregados y mantenimiento)}
+
+\begin{longtable}{p{3.6cm} p{3.4cm} p{2.6cm} p{2cm} p{2.7cm}}
+\toprule
+Función & Algoritmo & Costo temporal real & Big O & Costo espacial \\
+\midrule
+\endhead
+calcularPromedioInstitucional &
+Recorrido secuencial con acumulador &
+$n$ sumas más $1$ división &
+$O(n)$ &
+$O(1)$, un acumulador \\
+encontrarMayorPromedio &
+Recorrido secuencial con máximo &
+$n$ comparaciones &
+$O(n)$ &
+$O(1)$ \\
+encontrarMayorCreditos &
+Recorrido secuencial con máximo &
+$n$ comparaciones &
+$O(n)$ &
+$O(1)$ \\
+generarReporteEstadistico &
+Recorrido secuencial con múltiples acumuladores (por carrera, por nivel,
+etc.) &
+$n \times c$, donde $c$ es la cantidad de categorías acumuladas &
+$O(n)$ &
+$O(c)$, un acumulador por categoría \\
+\bottomrule
+\end{longtable}
+
+El costo real de \texttt{generarReporteEstadistico} es $n \times c$ y no
+simplemente $n$: por cada uno de los $n$ registros se actualizan $c$
+acumuladores (total por carrera, por nivel académico, etc.). Como $c$ es
+una constante pequeña y fija que no crece con $n$, la clase asintótica se
+mantiene en $O(n)$, pero el costo real ejecutado es mayor que un
+recorrido con un solo acumulador.

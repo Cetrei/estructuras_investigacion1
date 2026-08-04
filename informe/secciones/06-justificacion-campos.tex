@@ -1,0 +1,106 @@
+% !TEX root = ../main.tex
+\section{Justificación de cada uno de los campos del registro}
+
+Todos los campos de tipo texto se implementan como \texttt{char[]} de
+tamaño fijo, nunca como cadenas dinámicas, porque el tamaño fijo es lo que
+permite calcular el \texttt{offset} de cualquier registro dentro de su
+archivo mediante \texttt{posición} $\times$ \texttt{sizeof(struct)}.
+
+Cada arreglo de caracteres reserva un byte adicional para el carácter nulo
+(\texttt{'\textbackslash 0'}), que en C marca el final real de la cadena:
+funciones como \texttt{strlen}, \texttt{strcmp} o
+\texttt{printf("\%s", \ldots)} no conocen la longitud de una cadena de
+antemano, y sin ese byte seguirían leyendo memoria más allá del dato
+válido.
+
+\begin{longtable}{p{2.7cm} p{2.2cm} p{1.5cm} p{6.5cm}}
+\toprule
+Campo & Tipo & Tamaño & Justificación \\
+\midrule
+\endhead
+
+carne &
+int &
+4 B &
+Llave primaria numérica, requerida explícitamente por el caso de estudio
+junto con la identificación como campo de búsqueda independiente. \\
+
+identificacion &
+char[13] &
+13 B &
+Cubre el caso más ancho entre cédula física (9 dígitos), DIMEX de
+residencia (entre 11 y 12 dígitos) y pasaporte alfanumérico: 12 caracteres
+más el terminador nulo. \\
+
+tipoIdentificacion &
+enum (int) &
+4 B &
+Distingue nacional/DIMEX/pasaporte sin mezclar esa información dentro del
+campo de texto. \\
+
+nombre &
+char[21] &
+21 B &
+20 caracteres útiles, margen razonable para nombres compuestos. \\
+
+apellido1, apellido2 &
+char[21] c/u &
+42 B &
+Separados en vez de un solo campo \texttt{apellidos}, para permitir
+búsquedas y ordenamientos por apellido de forma consistente. \\
+
+fechaNacimiento &
+struct Fecha &
+12 B &
+TAD propio (día, mes, año como \texttt{int}), reutilizable y con sus
+propias reglas de validez. \\
+
+sexo &
+enum (int) &
+4 B &
+Dominio cerrado, representado como entero en vez de texto libre. \\
+
+carrera &
+int &
+4 B &
+Referencia a un catálogo de carreras en vez de repetir el nombre completo
+en cada registro. \\
+
+nivelAcademico &
+enum (int) &
+4 B &
+Dominio cerrado (pregrado, grado, posgrado, etc.). \\
+
+creditosAprobados &
+int &
+4 B &
+Cantidad entera, sin componente fraccionario. \\
+
+promedio &
+float &
+4 B &
+Requiere parte decimal. \\
+
+estado &
+int (bool a mano) &
+4 B &
+0 para inactivo, 1 para activo; sostiene el borrado lógico sin usar
+\texttt{bool} de C++. \\
+
+correo &
+char[41] &
+41 B &
+Margen suficiente para direcciones institucionales y personales comunes. \\
+
+telefono &
+char[9] &
+9 B &
+8 dígitos (formato costarricense) más el terminador nulo. \\
+
+direccion &
+char[81] &
+81 B &
+Texto libre de longitud variable, con un tope generoso fijo. \\
+
+\bottomrule
+\end{longtable}

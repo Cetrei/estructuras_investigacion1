@@ -1,0 +1,31 @@
+% !TEX root = ../main.tex
+\section{Diseño del arreglo que almacenará los estudiantes}
+
+El arreglo de registros completos no se carga en memoria principal: vive
+en disco, en los tres archivos binarios descritos en la sección 5. Lo que
+sí reside en RAM en todo momento es un arreglo mucho más liviano, el
+índice, que solo guarda la llave de búsqueda, la posición física del
+registro en disco y su estado (ver sección 14).
+
+\subsection{Por qué cargar todo en memoria no escala}
+
+\begin{longtable}{p{4.5cm} p{2.5cm} p{2.5cm} p{2.5cm}}
+\toprule
+Cantidad de estudiantes & Registro completo (3 archivos) & Solo índice (3 índices) & Ahorro \\
+\midrule
+\endhead
+25\,000 & $\approx$ 6.2 MB & $\approx$ 1.2 MB & 5 veces \\
+100\,000 & $\approx$ 25 MB & $\approx$ 4.8 MB & 5 veces \\
+1\,000\,000 & $\approx$ 259 MB & $\approx$ 48 MB & 5 veces \\
+\bottomrule
+\end{longtable}
+
+El cálculo usa 259 bytes por estudiante (suma de los tres structs de la
+sección 5, sin contar relleno de alineación) contra 16 bytes por entrada
+de índice (carné, posición y estado), multiplicado por tres índices
+(primario, identificación, apellido). Aunque un millón de registros
+completos (aproximadamente 259 MB) todavía cabría en la memoria de una
+máquina moderna, el diseño no depende de esa suposición: el costo en RAM
+del índice crece mucho más lento que el de los datos completos, por lo que
+la arquitectura sigue siendo viable sin importar cuánto crezca la
+matrícula de la universidad.

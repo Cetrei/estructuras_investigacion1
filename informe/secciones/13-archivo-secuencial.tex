@@ -1,0 +1,24 @@
+% !TEX root = ../main.tex
+\section{Explicación de cómo se almacenará la información en un archivo secuencial}
+
+La información permanente vive en tres archivos binarios de registros de
+tamaño fijo: \texttt{identidad.dat}, \texttt{academico.dat} y
+\texttt{contacto.dat}, uno por cada struct de la sección 5. El tamaño fijo
+es lo que hace posible calcular la posición física de cualquier registro
+sin recorrer el archivo:
+
+\begin{lstlisting}[style=pseudocodigo]
+offset = posicion_logica * sizeof(struct)
+\end{lstlisting}
+
+Con ese \texttt{offset}, \texttt{fseek} posiciona el cursor de lectura o
+escritura directamente sobre el registro deseado, y \texttt{fread} o
+\texttt{fwrite} lo leen o sobrescriben sin tocar el resto del archivo. En
+ningún momento se carga el archivo completo a memoria: solo se traen a RAM
+los registros puntuales que una operación necesita, siguiendo la posición
+que entrega el índice correspondiente (sección 14).
+
+Los tres archivos comparten la misma posición lógica por estudiante, de
+modo que el registro en la posición $i$ de cada uno pertenece siempre al
+mismo carné, sin necesidad de guardar una llave adicional dentro de cada
+struct para relacionarlos entre sí.

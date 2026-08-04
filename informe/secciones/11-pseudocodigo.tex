@@ -1,0 +1,136 @@
+% !TEX root = ../main.tex
+\section{Pseudocódigo de las funciones principales}
+
+El pseudocódigo se escribe en sintaxis C simplificada: condicionales,
+ciclos y llamadas a función explícitas, sin declarar tipos de bajo nivel
+que no aportan a entender el algoritmo. Esto es distinto de los diagramas
+de flujo de la sección 15, donde sí se usa la notación de subdiagrama
+(\texttt{| paso |}) para marcar qué pasos se expanden en un diagrama
+aparte.
+
+\subsection{registrarEstudiante(datos)}
+\begin{lstlisting}[style=pseudocodigo]
+funcion registrarEstudiante(datos):
+    si no validarFormato(datos):
+        retornar ERROR
+
+    posicion = buscarEspacioLibre()
+    si posicion == NO_HAY_ESPACIO:
+        posicion = expandirVector()
+
+    escribirRegistroEnOffset(identidad.dat, posicion, datos.identidad)
+    escribirRegistroEnOffset(academico.dat, posicion, datos.academico)
+    escribirRegistroEnOffset(contacto.dat, posicion, datos.contacto)
+
+    insertarEnIndicePrimario(datos.carne, posicion)
+
+    retornar EXITO
+\end{lstlisting}
+
+\subsection{buscarEstudiantePorCarne(carne)}
+\begin{lstlisting}[style=pseudocodigo]
+funcion buscarEstudiantePorCarne(carne):
+    posicion = buscarEnIndicePrimario(carne)
+
+    si posicion == NO_ENCONTRADO:
+        retornar NO_ENCONTRADO
+
+    identidad = leerRegistroEnOffset(identidad.dat, posicion)
+    academico = leerRegistroEnOffset(academico.dat, posicion)
+    contacto  = leerRegistroEnOffset(contacto.dat, posicion)
+
+    retornar ensamblarEstudiante(identidad, academico, contacto)
+\end{lstlisting}
+
+\subsection{buscarEnIndicePrimario(carne)}
+\begin{lstlisting}[style=pseudocodigo]
+funcion buscarEnIndicePrimario(carne):
+    posicion = busquedaBinaria(zonaPrimaria, carne)
+    si posicion != NO_ENCONTRADO:
+        retornar posicion
+
+    para i desde 0 hasta longitud(zonaAltasNuevas) - 1:
+        si zonaAltasNuevas[i].carne == carne:
+            retornar zonaAltasNuevas[i].posicion
+
+    retornar NO_ENCONTRADO
+\end{lstlisting}
+
+\subsection{buscarEstudiantesPorApellido(apellido)}
+\begin{lstlisting}[style=pseudocodigo]
+funcion buscarEstudiantesPorApellido(apellido):
+    si indiceApellido.desactualizado:
+        indiceApellido = construirIndiceSecundario(APELLIDO)
+
+    posiciones = buscarEnIndiceSecundario(indiceApellido, apellido)
+
+    resultados = listaVacia()
+    para cada posicion en posiciones:
+        identidad = leerRegistroEnOffset(identidad.dat, posicion)
+        agregar(resultados, identidad)
+
+    retornar resultados
+\end{lstlisting}
+
+\subsection{eliminarEstudianteLogico(carne)}
+\begin{lstlisting}[style=pseudocodigo]
+funcion eliminarEstudianteLogico(carne):
+    posicion = buscarEnIndicePrimario(carne)
+
+    si posicion == NO_ENCONTRADO:
+        retornar ERROR
+
+    marcarInactivoEnIndice(carne)
+
+    academico = leerRegistroEnOffset(academico.dat, posicion)
+    academico.estado = 0
+    escribirRegistroEnOffset(academico.dat, posicion, academico)
+
+    retornar EXITO
+\end{lstlisting}
+
+\subsection{insertarEnIndicePrimario(carne, posicion)}
+\begin{lstlisting}[style=pseudocodigo]
+funcion insertarEnIndicePrimario(carne, posicion):
+    agregarAlFinal(zonaAltasNuevas, carne, posicion)
+
+    si longitud(zonaAltasNuevas) >= 0.10 * longitud(zonaPrimaria):
+        reorganizarIndicePrimario()
+\end{lstlisting}
+
+\subsection{reorganizarIndicePrimario()}
+\begin{lstlisting}[style=pseudocodigo]
+funcion reorganizarIndicePrimario():
+    fusionado = mezclarOrdenado(zonaPrimaria, zonaAltasNuevas)
+    zonaPrimaria = fusionado
+    zonaAltasNuevas = vacio()
+\end{lstlisting}
+
+\subsection{purgarInactivos()}
+\begin{lstlisting}[style=pseudocodigo]
+funcion purgarInactivos():
+    crear identidadTemp.dat, academicoTemp.dat, contactoTemp.dat
+
+    para cada posicion desde 0 hasta contarRegistros() - 1:
+        academico = leerRegistroEnOffset(academico.dat, posicion)
+
+        si academico.estado == 1:
+            identidad = leerRegistroEnOffset(identidad.dat, posicion)
+            contacto  = leerRegistroEnOffset(contacto.dat, posicion)
+            agregarRegistroAlFinal(identidadTemp.dat, identidad)
+            agregarRegistroAlFinal(academicoTemp.dat, academico)
+            agregarRegistroAlFinal(contactoTemp.dat, contacto)
+        // si estado es 0, el registro se descarta y no pasa al archivo nuevo
+
+    reemplazarArchivo(identidad.dat, identidadTemp.dat)
+    reemplazarArchivo(academico.dat, academicoTemp.dat)
+    reemplazarArchivo(contacto.dat, contactoTemp.dat)
+
+    // las posiciones cambiaron: reconstruir los tres indices desde cero,
+    // no se puede reutilizar la zona de altas nuevas anterior (ver ADR 004)
+    indicePrimario = reconstruirIndice(identidad.dat, CARNE)
+    indiceIdentificacion = reconstruirIndice(identidad.dat, IDENTIFICACION)
+    indiceApellido = reconstruirIndice(identidad.dat, APELLIDO)
+
+    retornar EXITO
+\end{lstlisting}
