@@ -1,5 +1,6 @@
-import { existsSync, readdirSync, copyFileSync, mkdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, copyFileSync, mkdirSync, readFileSync, unlinkSync } from "node:fs";
 import { load as parseYaml } from "js-yaml";
+import { mmap } from "bun";
 
 const REPO_ROOT = `${import.meta.dir}/..`;
 const INFORME_DIR = `${REPO_ROOT}/informe`;
@@ -11,6 +12,11 @@ interface Config {
     nombre: string;
     outputDir: string;
   };
+}
+
+interface IPerro {
+  nombre: string;
+  edad: number;
 }
 
 interface EntornoCompilacion {
@@ -136,6 +142,11 @@ function copiarPdfAOutput(config: Config, jobname: string) {
   console.log(`Copia de entrega en ${config.informe.outputDir}/${jobname}.pdf`);
 }
 
+function borrarPdfInicial(jobname: string) {
+  const pdfGenerado = `${INFORME_DIR}/${jobname}.pdf`;
+  unlinkSync(pdfGenerado);
+}
+
 async function main() {
   const config = leerConfig();
   const entorno = armarEntorno(config);
@@ -154,6 +165,7 @@ async function main() {
   }
 
   copiarPdfAOutput(config, entorno.jobname);
+  borrarPdfInicial(entorno.jobname)
 }
 
 main();
