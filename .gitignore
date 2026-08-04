@@ -20,8 +20,9 @@
 # Node / Bun
 node_modules/
 bun.lockb
-bun.lock
 
 # OS
 .DS_Store
 Thumbs.db
+
+*.pdf
