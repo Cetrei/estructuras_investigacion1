@@ -3,9 +3,13 @@
 \input{formato}
 
 \title{Investigación \#1: Caso de Estudio}
-\shorttitle{Diseño e Implementación del Sistema de Gestión Académica de la Universidad XUNA}
+% El shorttitle se omite a proposito: en modo stu el running head (que se
+% repite en negrita en cada pagina) es opcional segun apa7 v1.08+. Como el
+% titulo largo debe aparecer SOLO en la portada, sin negrita, se usa \note
+% en su lugar (pensado por apa7 para texto adicional bajo la afiliacion).
 \author{Joanfer Hidalgo Chaves \\ Santiago Hernández Chaves \\ Justin Angulo Artavia}
 \affiliation{Escuela de Informática, Universidad Nacional de Costa Rica}
+\note{Diseño e Implementación del Sistema de Gestión Académica de la Universidad XUNA}
 \course{EIF207, Estructuras de Datos}
 \professor{Johnny Villalobos Murillo}
 \duedate{\today}
@@ -13,6 +17,10 @@
 \begin{document}
 
 \maketitle
+
+% APA 7 no numera secciones, asi que el indice tampoco muestra numeros.
+\tableofcontents
+\newpage
 
 \input{secciones/01-introduccion}
 \input{secciones/02-analisis-problema}
