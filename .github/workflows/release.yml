@@ -31,6 +31,17 @@ jobs:
             libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 \
             libgbm1 libasound2t64 libpango-1.0-0 libpangocairo-1.0-0
 
+      - name: Relajar la restriccion de AppArmor sobre user namespaces sin privilegios
+        # Ubuntu 23.10+ (incluido el runner ubuntu-latest actual) restringe por
+        # AppArmor la creacion de user namespaces sin privilegios a nivel de kernel.
+        # El zygote de Chrome los necesita para su sandbox interno y falla con
+        # "No usable sandbox!" incluso con --no-sandbox pasado a Puppeteer, porque
+        # el intento de crear el namespace ocurre antes de que ese flag tenga efecto.
+        # Se relaja solo en este runner efimero y descartable (no en una maquina
+        # persistente), que es el workaround oficial documentado por Chromium:
+        # https://chromium.googlesource.com/chromium/src/+/main/docs/security/apparmor-userns-restrictions.md
+        run: echo 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
+
       - name: Generar los diagramas (.svg y .pdf) a partir de diagramas/src/*.mmd
         # bun run build:diagrams descarga su propio Chromium local en .cache/puppeteer/
         # (ver scripts/buildDiagrams.ts), no requiere ningun paso previo de instalacion.
@@ -57,7 +68,8 @@ jobs:
         run: |
           mkdir -p "$NOMBRE_ENTREGA/diagramas"
 
-          # 1. Informe tecnico en PDF
+          # 1. Informe tecnico en PDF (incluye la tabla resumen de funciones
+          #    con su costo computacional, ver informe/secciones/12-costo-computacional.tex)
           cp informe/main.pdf "$NOMBRE_ENTREGA/informe-tecnico.pdf"
 
           # 2. Documento editable
@@ -66,13 +78,6 @@ jobs:
           # 3. Diagramas utilizados durante el analisis (fuente .mmd + renders)
           cp -r diagramas/src "$NOMBRE_ENTREGA/diagramas/fuente"
           cp -r diagramas/output "$NOMBRE_ENTREGA/diagramas/renderizados"
-
-          # 4. Tabla resumen de funciones con su costo computacional
-          #    (fuente unica versionada en informe/tablas/tabla-resumen-funciones.csv,
-          #    consolidada a mano a partir de las tablas por modulo del informe para
-          #    que sea legible como entregable independiente, sin depender de un
-          #    compilador de LaTeX).
-          cp informe/tablas/tabla-resumen-funciones.csv "$NOMBRE_ENTREGA/tabla-resumen-funciones.csv"
 
       - name: Comprimir la entrega
         run: zip -r "$NOMBRE_ENTREGA.zip" "$NOMBRE_ENTREGA"

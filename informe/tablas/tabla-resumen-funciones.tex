@@ -1,0 +1,98 @@
+% !TEX root = ../main.tex
+% Tabla resumen de todas las funciones propuestas con su costo computacional.
+% Consolida en un solo lugar las funciones que aparecen repartidas por modulo
+% en costo-modulo-mapas.tex, costo-modulo-archivo.tex, costo-modulo-estudiante.tex
+% y costo-modulo-reportes.tex (seccion 12), para cumplir el entregable
+% "Tabla resumen con todas las funciones propuestas y su respectivo costo
+% computacional" pedido en el enunciado como una sola tabla navegable.
+{\small
+\begin{longtable}{p{4.6cm} p{5.6cm} p{2.6cm} p{2.3cm}}
+\caption{Resumen de funciones propuestas y su costo computacional}\\
+\toprule
+Función & Algoritmo & Costo real & Big O \\
+\midrule
+\endfirsthead
+
+\toprule
+Función & Algoritmo & Costo real & Big O \\
+\midrule
+\endhead
+
+\bottomrule
+\endfoot
+
+\multicolumn{4}{c}{\textit{Módulo archivo (persistencia)}} \\
+\midrule
+abrirArchivo(nombre, modo) & Llamada directa a \texttt{fopen} & 1 operación de E/S & $O(1)$ \\
+\addlinespace
+cerrarArchivo(fp) & Llamada directa a \texttt{fclose} & 1 operación de E/S & $O(1)$ \\
+\addlinespace
+calcularOffset(posicion, tamRegistro) & Multiplicación directa & 1 operación & $O(1)$ \\
+\addlinespace
+leerRegistroEnOffset(fp, offset, destino) & \texttt{fseek} más \texttt{fread} de un registro de tamaño fijo & 1 operación de E/S & $O(1)$ \\
+\addlinespace
+escribirRegistroEnOffset(fp, offset, registro) & \texttt{fseek} más \texttt{fwrite} de un registro de tamaño fijo & 1 operación de E/S & $O(1)$ \\
+\addlinespace
+agregarRegistroAlFinal(fp, registro) & \texttt{fseek} al final más \texttt{fwrite} & 1 operación de E/S & $O(1)$ \\
+\addlinespace
+contarRegistros(fp, tamRegistro) & \texttt{ftell} sobre el tamaño del archivo dividido entre el tamaño del struct & 1 operación & $O(1)$ \\
+\addlinespace
+purgarInactivos() & Recorrido secuencial de $n$ registros, reescritura de los activos ($a \leq n$) y reconstrucción de 3 mapas & $n + a + n\log n$ & $O(n\log n)$ \\
+\addlinespace
+
+\multicolumn{4}{c}{\textit{Módulo de mapas de posiciones}} \\
+\midrule
+cargarMapaDePosiciones() & Lectura secuencial del archivo \texttt{.idx} o reconstrucción desde los archivos de datos & $n$ & $O(n)$ \\
+\addlinespace
+buscarPosicionPorCarne(carne) & Binaria en zona ordenada, lineal en lista de recién ingresados si no hay coincidencia & $\log n + k$ & $O(\log n) + O(k)$ \\
+\addlinespace
+registrarPosicionEnMapa(carne, posicion) & Inserción al final de la lista de recién ingresados & 1 operación (amortizado) & $O(1)$ amortizado \\
+\addlinespace
+fusionarRecienIngresados() & Mezcla ordenada de zona ordenada ($n$) y lista de recién ingresados ($k$) & $(n+k)\log(n+k)$ & $O(n\log n)$ \\
+\addlinespace
+marcarInactivoEnMapa(carne) & Búsqueda en el mapa más escritura de un campo & $\log n + 1$ & $O(\log n)$ \\
+\addlinespace
+construirMapaPorCampo(campo) & Copia de $n$ llaves más ordenamiento & $n + n\log n$ & $O(n\log n)$ \\
+\addlinespace
+buscarPosicionesPorCampo(campo, valor) & Binaria en zona ordenada, lineal en lista de recién ingresados & $\log n + k$ & $O(\log n) + O(k)$ \\
+\addlinespace
+guardarMapasEnDisco() & Escritura secuencial de las $n$ entradas de cada mapa & $n$ & $O(n)$ \\
+\addlinespace
+
+\multicolumn{4}{c}{\textit{Módulo estudiante}} \\
+\midrule
+registrarEstudiante(datos) & Inserción en el mapa más escritura de 3 registros de tamaño fijo & $1 + 3$ & $O(1)$ amortizado \\
+\addlinespace
+buscarEstudiantePorCarne(carne) & Búsqueda en el mapa más 1 lectura en offset & $\log n + 1$ & $O(\log n)$ \\
+\addlinespace
+buscarEstudiantePorIdentificacion(id) & Búsqueda en el mapa de identificación más 1 lectura en offset & $\log n + 1$ & $O(\log n)$ \\
+\addlinespace
+buscarEstudiantesPorApellido(apellido) & Búsqueda en el mapa de apellido más $k$ lecturas de coincidencias & $\log n + k$ & $O(\log n) + O(k)$ \\
+\addlinespace
+modificarEstudiante(carne, nuevosDatos) & Búsqueda en el mapa más escritura en offset existente & $\log n + 1$ & $O(\log n)$ \\
+\addlinespace
+eliminarEstudianteLogico(carne) & Búsqueda en el mapa más marcar \texttt{estado = 0} en mapa y archivo & $\log n + 2$ & $O(\log n)$ \\
+\addlinespace
+mostrarTodosLosEstudiantes() & Recorrido secuencial completo & $n$ & $O(n)$ \\
+\addlinespace
+mostrarEstudiantesPorCarrera(carrera) & Recorrido secuencial con filtro & $n$ comparaciones & $O(n)$ \\
+\addlinespace
+actualizarPromedio(carne, promedio) & Búsqueda en el mapa más escritura en \texttt{academico.dat} & $\log n + 1$ & $O(\log n)$ \\
+\addlinespace
+actualizarCreditosAprobados(carne, creditos) & Búsqueda en el mapa más escritura en \texttt{academico.dat} & $\log n + 1$ & $O(\log n)$ \\
+\addlinespace
+consultarExpedienteCompleto(carne) & Búsqueda en el mapa más 3 lecturas (identidad, académico, contacto) & $\log n + 3$ & $O(\log n)$ \\
+\addlinespace
+
+\multicolumn{4}{c}{\textit{Módulo reportes (agregados y mantenimiento)}} \\
+\midrule
+calcularPromedioInstitucional() & Recorrido secuencial con contador & $n$ sumas más 1 división & $O(n)$ \\
+\addlinespace
+encontrarMayorPromedio() & Recorrido secuencial con máximo & $n$ comparaciones & $O(n)$ \\
+\addlinespace
+encontrarMayorCreditos() & Recorrido secuencial con máximo & $n$ comparaciones & $O(n)$ \\
+\addlinespace
+generarReporteEstadistico() & Recorrido secuencial con múltiples contadores (por carrera, por nivel, etc.) & $n \times c$, $c$ = cantidad de categorías & $O(n)$ \\
+
+\end{longtable}
+}
