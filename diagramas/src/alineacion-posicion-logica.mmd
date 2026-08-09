@@ -1,0 +1,55 @@
+%%{init: {'theme': 'base', 'themeVariables': {'fontSize': '15px'}}}%%
+flowchart TB
+
+    subgraph F1["identidad.dat"]
+        direction LR
+        a0["0"]
+        a1["1"]
+        a2["2"]
+        ai["i"]
+        a4["4"]
+        a5["5"]
+        a6["6"]
+        a7["7"]
+        a0 --- a1 --- a2 --- ai --- a4 --- a5 --- a6 --- a7
+    end
+
+    subgraph F2["academico.dat"]
+        direction LR
+        b0["0"]
+        b1["1"]
+        b2["2"]
+        bi["i"]
+        b4["4"]
+        b5["5"]
+        b6["6"]
+        b7["7"]
+        b0 --- b1 --- b2 --- bi --- b4 --- b5 --- b6 --- b7
+    end
+
+    subgraph F3["contacto.dat"]
+        direction LR
+        c0["0"]
+        c1["1"]
+        c2["2"]
+        ci["i"]
+        c4["4"]
+        c5["5"]
+        c6["6"]
+        c7["7"]
+        c0 --- c1 --- c2 --- ci --- c4 --- c5 --- c6 --- c7
+    end
+
+    nota["Misma posicion logica i, mismo carne"]
+
+    ai --> nota
+    bi --> nota
+    ci --> nota
+
+    classDef celda fill:#ffffff,stroke:#28253D,stroke-width:1px,color:#1a1a1a;
+    classDef objetivo fill:#FF6D00,stroke:#28253D,stroke-width:2px,color:#ffffff;
+    classDef resultado fill:#ffae70,stroke:#28253D,stroke-width:1px,color:#1a1a1a;
+
+    class a0,a1,a2,a4,a5,a6,a7,b0,b1,b2,b4,b5,b6,b7,c0,c1,c2,c4,c5,c6,c7 celda;
+    class ai,bi,ci objetivo;
+    class nota resultado;

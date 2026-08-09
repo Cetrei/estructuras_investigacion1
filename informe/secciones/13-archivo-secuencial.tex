@@ -1,25 +1,45 @@
 % !TEX root = ../main.tex
 \section{Explicación de cómo se almacenará la información en un archivo secuencial}
+\label{sec:archivo-secuencial}
 
-La información permanente vive en tres archivos binarios de registros de
-tamaño fijo: \texttt{identidad.dat}, \texttt{academico.dat} y
-\texttt{contacto.dat}, uno por cada struct definido en la sección de
-diseño del registro. El tamaño fijo es lo que hace posible calcular la
-posición física de cualquier registro sin recorrer el archivo:
+La información permanente vive en tres archivos binarios de registros de tamaño fijo: 
+\begin{itemize}
+    \item \texttt{identidad.dat}
+    \item \texttt{academico.dat}
+    \item \texttt{contacto.dat}
+\end{itemize}
+Uno por cada struct definido en la sección de diseño del registro. 
 
+Como se menciono, tamaño fijo es lo que hace posible calcular la posición física de cualquier registro sin recorrer el archivo:
 \begin{lstlisting}[style=pseudocodigo]
 offset = posicion_logica * sizeof(struct)
 \end{lstlisting}
 
-Con ese \texttt{offset}, \texttt{fseek} posiciona el cursor de lectura o
-escritura directamente sobre el registro deseado, y \texttt{fread} o
-\texttt{fwrite} lo leen o sobrescriben sin tocar el resto del archivo. En
-ningún momento se carga el archivo completo a memoria: solo se traen a RAM
-los registros puntuales que una operación necesita, siguiendo la posición
-que entrega el mapa de posiciones correspondiente (ver sección de archivo
-indexado).
+Con ese \texttt{offset}, se posiciona el cursor de lectura o escritura directamente sobre el registro deseado, 
+y se ejecuta la accion (leer o escribir) sin tocar el resto del archivo. 
 
-Los tres archivos comparten la misma posición lógica por estudiante, de
-modo que el registro en la posición $i$ de cada uno pertenece siempre al
-mismo carné, sin necesidad de guardar una llave adicional dentro de cada
-struct para relacionarlos entre sí.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../diagramas/output/calculo-offset.pdf}
+    \caption{Cálculo del \texttt{offset} sobre un archivo de registros de tamaño fijo}
+    \label{fig:calculo-offset}
+\end{figure}
+
+La figura~\ref{fig:calculo-offset} ilustra el cálculo: dado un índice $i$, el \texttt{offset} señala exactamente el inicio
+del registro $i$-ésimo dentro del archivo, y solo ese registro se trae a RAM con \texttt{fread}.
+
+Reforzando la seccion anterior, en ningún momento se carga el archivo completo a memoria: 
+solo se traen a RAM los registros necesarios en el momento, siguiendo la posición que entrega el mapa de posiciones
+
+Los tres archivos comparten la misma posición lógica por estudiante, de modo que el registro en la posición $i$ de cada uno pertenece 
+siempre al mismo carné, sin necesidad de guardar una llave adicional dentro de cada struct para relacionarlos entre sí.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../diagramas/output/alineacion-posicion-logica.pdf}
+    \caption{Los tres archivos alineados por la misma posición lógica $i$}
+    \label{fig:alineacion-posicion-logica}
+\end{figure}
+
+La figura~\ref{fig:alineacion-posicion-logica} muestra esa alineación: la posición $i$ en \texttt{identidad.dat}, 
+\texttt{academico.dat} y \texttt{contacto.dat} corresponde siempre al mismo estudiante, sin necesitar una llave compartida entre los tres archivos.

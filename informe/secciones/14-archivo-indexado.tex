@@ -1,141 +1,100 @@
 % !TEX root = ../main.tex
 \section{Propuesta de un archivo indexado que permita acelerar las búsquedas}
+\label{sec:archivo-indexado}
 
-Recorrer secuencialmente un archivo de cientos de miles de registros para
-ubicar un solo estudiante cuesta $O(n)$: es aceptable con 25\,000
-registros, pero se vuelve lento a la escala que el caso de estudio
-anticipa. La solución no es cargar todos los registros a memoria (la
-sección de diseño del arreglo ya descarta esa opción por el espacio que
-ocuparía), sino mantener en RAM una estructura mucho más liviana que solo
-indique dónde está cada registro en disco: un archivo indexado.
+Recorrer secuencialmente un archivo de cientos de miles de registros para ubicar un solo estudiante cuesta $O(n)$: 
+es aceptable con 25\,000 registros, pero se vuelve lento a la escala que el caso de estudio anticipa. 
+\newline
+La solución no es cargar todos los registros a memoria como se descarto antes, sino mantener en RAM una estructura 
+mucho más liviana que solo indique dónde está cada registro en disco: un archivo indexado.
 
 \subsection{Funcionamiento general del mapa de posiciones}
-% TODO(cita): esta subseccion describe ISAM (Indexed Sequential Access
-% Method). Falta agregar una referencia bibliografica real (el libro de
-% texto del curso, o una fuente academica formal sobre organizacion de
-% archivos/ISAM) y citarla aqui con \autocite{} o \textcite{}, ademas de
-% agregar la entrada correspondiente en referencias.bib. No inventar el
-% autor/anio: usar la fuente que el curso recomiende.
 
-El patrón adoptado corresponde a ISAM (\emph{Indexed Sequential Access
-Method}), la técnica que usaban los primeros motores de bases de datos
-relacionales antes de que los árboles B y B+ se volvieran el estándar. En
-este informe nos referimos a esta estructura simplemente como el
-\textbf{mapa de posiciones}, porque describe mejor lo que hace: para cada
-llave de búsqueda (carné, identificación o apellido) guarda únicamente
-dónde está el registro correspondiente en disco, no el registro en sí.
+El patrón adoptado corresponde a ISAM (\emph{Indexed Sequential Access Method}), la técnica que usaban los primeros motores de bases de datos
+relacionales antes de que los árboles B y B+ se volvieran el estándar
+\autocite{silberschatz2019database}. 
 
-ISAM separa dos responsabilidades que un árbol balanceado resuelve
-juntas: mantiene los datos ordenados en un archivo secuencial, y mantiene
-aparte una estructura de índice, también ordenada, que guarda únicamente
-la llave y la posición física del dato. Con esa estructura se puede
-saltar directo al registro deseado en vez de recorrer el archivo
-completo.
+En este informe nos referimos a esta estructura simplemente como el \textbf{mapa de posiciones}, porque describe mejor lo que hace: 
+para cada llave de búsqueda (carné, identificación o apellido) guarda únicamente la posición física del registro en disco, 
+manteniendo aparte un archivo con los datos ordenados según esa misma llave.
 
-La parte que le da a ISAM su nombre completo es cómo maneja las
-inserciones. En vez de reescribir el archivo ordenado cada vez que entra
-un estudiante nuevo, esas altas se acumulan en una zona aparte, sin
-ordenar, a la que llamamos \textbf{lista de recién ingresados}, y se
-integran a la zona ordenada más adelante, en un solo proceso, cuando esa
-lista ya acumuló suficientes estudiantes.
-% TODO: ampliar con el detalle de bloques y paginas si se decide profundizar mas
-% en el funcionamiento clasico de ISAM (IBM) para la version final.
+Con esa estructura se puede saltar directo al registro deseado en vez de recorrer el archivo completo.
 
-\subsection{Por qué ISAM y no un árbol}
 
-Un árbol B o B+ resuelve el mismo problema reacomodándose automáticamente
-en cada inserción, sin necesidad de un proceso de reorganización aparte.
-Se descartó por dos razones concretas de este proyecto, no por evitar la
-complejidad de implementarlo:
-
-\begin{itemize}
-    \item El patrón de uso del sistema no lo necesita. Un árbol
-    balanceado justifica su costo de mantenimiento cuando las inserciones
-    y las búsquedas están genuinamente mezcladas todo el tiempo. Aquí las
-    búsquedas (matrícula, consulta de expediente, reportes) ocurren mucho
-    más seguido que las altas de estudiantes nuevos, que llegan en lotes
-    concentrados durante los períodos de admisión. Pagar el costo de
-    reacomodar un árbol en cada inserción, para un patrón de uso que es
-    mayoritariamente lectura, no se justifica.
-    \item El costo que ISAM sí paga (juntar la zona ordenada con la zona
-    de altas nuevas) es predecible y se puede programar para el momento en
-    que menos afecta al sistema: cuando la zona de altas nuevas crece lo
-    suficiente, o al apagar el sistema (ver la subsección de
-    reorganización más abajo y el ADR 004). Un árbol no permite posponer
-    ese costo de la misma forma, porque se reacomoda en cada operación
-    individual.
-\end{itemize}
+La parte que le da a ISAM su nombre completo (Indexed Sequential Access Method) es cómo maneja las inserciones.
+En vez de reescribir el archivo ordenado cada vez que entra un estudiante nuevo, se ingresa el nuevo valor en una zona aparte
+sin ordenar, a la que llamamos \textbf{lista de recién ingresados}, y se integran a la zona ordenada más adelante, cuando esa acumuló suficientes estudiantes.
 
 \subsection{Mapa por carné}
+\label{sec:mapa-por-carne}
 
-El mapa por carné ordena por carné y se divide en dos partes, tal como se
-documenta en el ADR 001:
+Este rdena por carné y se divide en dos partes:
 
 \begin{itemize}
-    \item Zona ordenada: arreglo ordenado, donde se busca con búsqueda
-    binaria en $O(\log n)$.
-    \item Lista de recién ingresados: arreglo sin ordenar donde se
-    agregan los estudiantes recién registrados en $O(1)$, revisado de
-    principio a fin cuando la zona ordenada no encuentra la llave
-    buscada.
+    \item Zona ordenada: arreglo ordenado, donde se hace búsqueda binaria en $O(\log n)$.
+    \item Lista de recién ingresados: arreglo sin ordenar para los estudiantes recién registrados en $O(1)$, 
+        revisado de principio a fin cuando la zona ordenada no encuentra la llave buscada.
 \end{itemize}
 
-Cada entrada del mapa ocupa únicamente el carné, la posición en disco y
-el estado, no el registro completo. Eso es lo que permite que el mapa
-quepa en RAM aunque los datos completos no quepan (sección de diseño del
-arreglo).
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{../diagramas/output/estructura-interna-mapas.pdf}
+    \caption{Estructura interna del mapa por carné o identificación: zona ordenada y lista de recién ingresados}
+    \label{fig:estructura-interna-mapas}
+\end{figure}
+
+La figura~\ref{fig:estructura-interna-mapas} resume el flujo de búsqueda: primero se intenta en la zona ordenada
+con búsqueda binaria y, solo si no aparece ahí, se revisa la lista de recién ingresados de principio a fin.
+
+Cada entrada del mapa ocupa únicamente el carné, la posición en disco y el estado, no el registro completo. 
+Eso es lo que permite que el mapa quepa en RAM aunque los datos completos no quepan.
 
 \subsection{Mapas por identificación y por apellido}
 
-El caso de estudio exige buscar también por identificación y por
-apellido, ninguna de las dos es la llave primaria. En vez de recorrer el
-archivo completo para esas búsquedas, se agregan dos mapas adicionales
-(ADR 003), los dos apuntando a la misma posición física en
-\texttt{identidad.dat}, sin duplicar el registro del estudiante:
+El caso de estudio exige buscar también por identificación y por apellido, ninguna de las dos es la llave primaria.
+En vez de recorrer el archivo completo para esas búsquedas, se agregan dos mapas adicionales que apuntan la misma posición física en
+\texttt{identidad.dat}
 
 \begin{itemize}
-    \item Mapa por identificación: funciona igual que el mapa por carné,
-    con zona ordenada y lista de recién ingresados, porque buscar por
-    identificación pasa tan seguido como buscar por carné, por ejemplo
-    durante matrícula o para verificar la identidad de un estudiante.
-    \item Mapa por apellido: no se actualiza en cada estudiante nuevo
-    como los otros dos. En vez de eso, se arma de nuevo por completo la
-    primera vez que alguien pide una búsqueda o un reporte por apellido
-    después de que hubo cambios desde la última vez que se armó, y
-    también se arma de nuevo durante el proceso de apagado. Se hace así
-    porque las búsquedas por apellido son típicamente para generar
-    reportes, algo que ocurre de vez en cuando, no una operación que se
-    repite en cada uso del sistema. Armar este mapa de nuevo en cada
-    estudiante registrado pagaría un costo de $O(n \log n)$ cada vez, por
-    un beneficio que casi nunca se usa de inmediato.
+    \item Mapa por identificación: funciona igual que el mapa por carné, con zona ordenada y lista de recién ingresados, 
+        porque buscar por identificación pasa tan seguido como buscar por carné (en teoria)
+    \item Mapa por apellido: no se actualiza con cada estudiante nuevo como los otros dos. 
+        En vez de eso se hace la primera vez que se pide una búsqueda o un reporte por apellido 
+        después de que hubo cambios desde la última vez que se armó (tambien al apagar para guardar el estado). 
 \end{itemize}
 
-Esta forma de trabajar (un solo dato físico, varios mapas apuntando a él)
-es el mismo patrón que un índice secundario en un motor de bases de datos
-SQL: la tabla vive en un solo lugar, los índices solo indican dónde
-buscar.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{../diagramas/output/registro-fisico-archivo-indexado.pdf}
+    \caption{Un mismo registro físico referenciado por los tres mapas: carné, identificación y apellido}
+    \label{fig:registro-fisico-archivo-indexado}
+\end{figure}
+
+La figura~\ref{fig:registro-fisico-archivo-indexado} muestra cómo los tres mapas apuntan al mismo registro físico en
+\texttt{identidad.dat}: no existen tres copias de los datos, solo tres formas distintas de localizar la misma posición.
+
+El mapa por apellido funciona asi ya que tipicamente son para realizar reportes o en general algo que sucede de vez en cuando,
+podria ejecutarse el sistema y no usarse, por que armar un mapa nuevo que se actualice por cada estudiante no vale la pena
+
+Este diseño donde un dato fisico tiene varios mapas apuntando a el, es similar al patron de una base de datos SQL
+donde la tabla vive en un lugar y los indices indican donde buscar.
 
 \subsection{Reorganización y persistencia}
 \label{sec:reorganizacion}
 
-Cuando la lista de recién ingresados del mapa por carné o del mapa por
-identificación llega al 10\% del tamaño de su zona ordenada, se ejecuta
-una reorganización con el sistema encendido: se juntan la zona ordenada y
-la lista de recién ingresados en $O(n \log n)$, y la lista queda vacía
-otra vez. Esta reorganización no toca los archivos de datos en disco,
-solo la estructura del mapa en RAM.
+Cuando la lista de recién ingresados del mapa por carné o del mapa por identificación llega al 10\% del tamaño (elegido arbitrariamente) de su zona ordenada,
+se ejecuta una reorganización: se juntan la zona ordenada y la lista de recién ingresados en $O(n \log n)$, 
+y la lista queda vacía otra vez. Esta reorganización ocurre solo en la estructura del mapa en RAM.
 
-Al apagar el sistema ocurre un proceso distinto, descrito en el ADR 004:
-primero se purgan los registros inactivos de los tres archivos de datos,
-y después los tres mapas se arman de nuevo desde cero a partir del
-archivo ya compactado, en vez de juntar la lista de recién ingresados que
-existía antes de purgar. La razón es que la purga cambia la posición
-física de todos los registros que estaban después de uno eliminado, lo
-cual deja inválido cualquier mapa armado antes de purgar, sin importar si
-ya estaba reorganizado o no.
+En la estructura del estudiante se definio un valor de estado para cada registro, que indica si el estudiante esta activo o inactivo.
+Estos deben borrarse del sistema de archivos ya que son basura; por ello al apagar el sistema:
+\begin{itemize}
+    \item Se purgan los registros inactivos de los tres archivos de datos
+    \item Se reconstruyen los tres mapas desde cero a partir del archivo ya compactado
+\end{itemize}
 
-Los tres mapas completos (por carné, por identificación y por apellido,
-cada uno con su zona ordenada) se guardan en el archivo
-\texttt{estudiantes.idx} al apagar, para que la próxima vez que se
-encienda el sistema alcance con cargar los mapas ya armados en $O(n)$, en
-vez de reconstruirlos desde los archivos de datos.
+La razón es que la purga cambia la posición física de todos los registros que estaban después de uno eliminado, 
+esto deja inválido cualquier mapa armado antes de purgar, sin importar si ya estaba reorganizado o no.
+
+Los tres mapas completos se guardan en el archivo \texttt{estudiantes.idx} al apagar, para que la próxima vez que se
+encienda el sistema alcance con cargar los mapas ya armados en $O(n)$, en vez de reconstruirlos desde los archivos de datos.

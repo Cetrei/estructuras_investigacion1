@@ -1,0 +1,74 @@
+%%{init: {'theme': 'base', 'themeVariables': {'fontSize': '15px'}}}%%
+flowchart TB
+
+    T1["mapaPosiciones - arreglo en RAM"]
+
+    subgraph ARR["Zona ordenada - ordenada por carne, busqueda binaria"]
+        direction LR
+
+        subgraph C0["indice 0"]
+            direction TB
+            L0["carne: 1001"]
+            P0["posicion: 0"]
+            S0["estado: activo"]
+        end
+
+        subgraph C1["indice 1"]
+            direction TB
+            L1["carne: 1002"]
+            P1["posicion: 1"]
+            S1["estado: activo"]
+        end
+
+        subgraph C2["indice 2"]
+            direction TB
+            L2["carne: 1004"]
+            P2["posicion: 3"]
+            S2["estado: inactivo"]
+        end
+
+        subgraph C3["indice 3"]
+            direction TB
+            L3["carne: 1007"]
+            P3["posicion: 2"]
+            S3["estado: activo"]
+        end
+
+        C0 --- C1 --- C2 --- C3
+    end
+
+    subgraph REC["Lista de recien ingresados - sin ordenar, se agrega al final"]
+        direction LR
+
+        subgraph N0["indice 0"]
+            direction TB
+            NL0["carne: 1015"]
+            NP0["posicion: 4"]
+            NS0["estado: activo"]
+        end
+
+        subgraph N1["indice 1"]
+            direction TB
+            NL1["carne: 1003"]
+            NP1["posicion: 5"]
+            NS1["estado: activo"]
+        end
+    end
+
+    T1 --> ARR
+    T1 --> REC
+    ARR -.->|"cuando no se encuentra la llave, se revisa tambien aqui"| REC
+
+    classDef ram fill:#e8f0fe,stroke:#4472c4,stroke-width:1px,color:#1a1a1a;
+    classDef inactivo fill:#fbe4e4,stroke:#c0392b,stroke-width:1px,color:#1a1a1a;
+    classDef nuevo fill:#eafaf1,stroke:#27ae60,stroke-width:1px,color:#1a1a1a;
+    classDef celda fill:#ffffff,stroke:#8fa8d9,stroke-width:1px,color:#1a1a1a;
+    classDef celdaInactiva fill:#ffffff,stroke:#d98c85,stroke-width:1px,color:#1a1a1a;
+    classDef celdaNueva fill:#ffffff,stroke:#7dc9a0,stroke-width:1px,color:#1a1a1a;
+
+    class C0,C1,C3 ram;
+    class C2 inactivo;
+    class N0,N1 nuevo;
+    class L0,P0,S0,L1,P1,S1,L3,P3,S3 celda;
+    class L2,P2,S2 celdaInactiva;
+    class NL0,NP0,NS0,NL1,NP1,NS1 celdaNueva;

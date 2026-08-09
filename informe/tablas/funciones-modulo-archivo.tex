@@ -1,0 +1,21 @@
+\begin{longtable}{p{7.2cm} p{7.8cm}}
+\toprule
+Función & Entrada $\rightarrow$ Salida \\
+\midrule
+\endhead
+abrirArchivo(nombre, modo) &
+    nombre, modo $\rightarrow$ FILE* \\
+cerrarArchivo(fp) &
+    FILE* $\rightarrow$ void \\
+calcularOffset(posicion, tamRegistro) &
+    posición, tamaño $\rightarrow$ offset en bytes \\
+leerRegistroEnOffset(fp, offset, destino) &
+    offset $\rightarrow$ registro leído \\
+escribirRegistroEnOffset(fp, offset, registro) &
+    offset, registro $\rightarrow$ éxito o error \\
+agregarRegistroAlFinal(fp, registro) &
+    registro $\rightarrow$ offset asignado \\
+contarRegistros(fp, tamRegistro) &
+    sin entrada $\rightarrow$ cantidad total \\
+\bottomrule
+\end{longtable}

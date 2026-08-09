@@ -1,0 +1,78 @@
+\begin{longtable}{p{2.7cm} p{2.2cm} p{1.5cm} p{6.5cm}}
+\toprule
+Campo & Tipo & Tamaño & Justificación \\
+\midrule
+\endhead
+
+carne &
+int &
+4 B &
+Llave primaria, requerida explícitamente por el caso de estudio \\
+
+identificacion &
+char[13] &
+13 B &
+Cubre el caso más ancho entre cédula física (9 dígitos) y pasaporte alfanumérico: 12 caracteres. \\
+
+nombre &
+char[21] &
+21 B &
+20 caracteres útiles, margen razonable para nombres compuestos. \\
+
+apellidos &
+char[41] &
+41 B &
+Un solo campo, como lo pide el enunciado: 40 caracteres útiles cubren primer y segundo apellido juntos. \\
+
+fechaNacimiento &
+struct Fecha &
+12 B &
+TAD propio (día, mes, año como \texttt{int}), reutilizable y con sus propias reglas de validez. \\
+
+sexo &
+enum (int) &
+4 B &
+Dominio cerrado paraa evitar inconsistencias de tamanos -> representado como entero en vez de texto libre. \\
+
+carrera &
+int &
+4 B &
+Referencia a un catálogo de carreras en vez de repetir el nombre completo en cada registro. \\
+
+nivelAcademico &
+enum (int) &
+4 B &
+Dominio cerrado (pregrado, grado, posgrado, etc). \\
+
+creditosAprobados &
+int &
+4 B &
+Cantidad entera, sin componente fraccionario. \\
+
+promedio &
+float &
+4 B &
+Requiere parte decimal. \\
+
+estado &
+int (bool a mano) &
+4 B &
+0 para inactivo, 1 para activo; sostiene el borrado lógico sin usar \texttt{bool} \\
+
+correo &
+char[41] &
+41 B &
+Margen suficiente para direcciones institucionales y personales comunes. \\
+
+telefono &
+char[9] &
+9 B &
+8 dígitos (formato costarricense) más el terminador nulo. \\
+
+direccion &
+char[81] &
+81 B &
+Texto libre de longitud variable, con un tope generoso para evitar problemas \\
+
+\bottomrule
+\end{longtable}

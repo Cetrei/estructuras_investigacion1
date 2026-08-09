@@ -1,0 +1,39 @@
+{\small
+\begin{longtable}{p{4cm} p{5.5cm} p{3cm} p{2.2cm}}
+\toprule
+Función & Algoritmo & Costo real & Big O \\
+\midrule
+\endhead
+
+buscarPosicionPorCarne &
+    Binaria en zona ordenada, lineal en lista de recién ingresados si no hay coincidencia &
+    $\log n + k$ &
+    $O(\log n)$\newline$+ O(k)$ \\
+\addlinespace
+
+registrarPosicionEnMapa &
+    Inserción al final de la lista de recién ingresados &
+    $1$ operación\newline(amortizado) &
+    $O(1)$\newline amortizado \\
+\addlinespace
+
+fusionarRecienIngresados &
+    Mezcla ordenada de zona ordenada ($n$) y lista de recién ingresados ($k$) &
+    $(n+k)\log(n+k)$ &
+    $O(n \log n)$ \\
+\addlinespace
+
+buscarPosicionesPorCampo &
+    Binaria en zona ordenada, lineal en lista de recién ingresados &
+    $\log n + k$ &
+    $O(\log n)$\newline$+ O(k)$ \\
+\addlinespace
+
+construirMapaPorCampo\newline(apellido) &
+    Copia de $n$ llaves más ordenamiento &
+    $n + n\log n$ &
+    $O(n \log n)$ \\
+
+\bottomrule
+\end{longtable}
+}

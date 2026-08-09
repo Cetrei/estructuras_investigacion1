@@ -1,92 +1,64 @@
 % !TEX root = ../main.tex
 \section{Diseño del registro Estudiante}
 
-El enunciado de la investigación pide administrar catorce datos por
-estudiante: número de carné, identificación, nombre, apellidos, fecha de
-nacimiento, sexo, carrera, nivel académico, correo electrónico, número
-telefónico, dirección, cantidad de créditos aprobados, promedio general y
-estado del estudiante. El enunciado no propone ninguna forma de organizar
-estos datos, solo los enumera como requisitos que el sistema debe
-guardar.
+El enunciado de la investigación pide administrar catorce datos por estudiante: \\
+\begin{itemize}
+    \item número de carné
+    \item identificación
+    \item nombre
+    \item apellidos
+    \item fecha de nacimiento
+    \item sexo
+    \item carrera
+    \item nivel académico
+    \item correo electrónico
+    \item número telefónico
+    \item dirección
+    \item cantidad de créditos aprobados
+    \item promedio general
+    \item estado del estudiante. 
+\end{itemize}
+El enunciado no propone ninguna forma de organizar estos datos, solo se pide que sean guardados.
 
-El primer intento del equipo fue juntar los catorce campos en un único
-registro. Al revisarlo con cuidado apareció un problema: esos catorce
-campos no cambian con la misma frecuencia ni se usan juntos en las mismas
-operaciones. El nombre y la fecha de nacimiento de un estudiante casi
-nunca cambian una vez matriculado. El promedio y los créditos aprobados se
-actualizan varias veces durante la carrera del estudiante, cada período
-lectivo. El correo, el teléfono y la dirección se consultan juntos
-normalmente solo cuando hace falta contactar al estudiante, y casi nunca
-al mismo tiempo que se actualiza el promedio.
+La primer idea del equipo fue juntar los catorce campos en un único registro. Al revisarlo con cuidado apareció un problema: 
+\begin{quote}
+    \centering
+    \itshape
+    Esos catorce campos no cambian con la misma frecuencia ni se usan juntos en las mismas operaciones
+\end{quote}
 
-Juntar estos tres grupos en un solo registro significa que actualizar el
-promedio de un estudiante, algo que ocurre constantemente, obliga también
-a leer y reescribir su nombre, su fecha de nacimiento, su correo y su
-dirección, aunque ninguno de esos datos haya cambiado.
+Por ejemplo el nombre y la fecha de nacimiento de un estudiante casi nunca cambian una vez matriculado. 
+El promedio y los créditos aprobados se actualizan varias veces durante la carrera del estudiante, cada período lectivo. 
+El correo, el teléfono y la dirección se consultan juntos normalmente solo cuando hace falta contactar al estudiante, y casi nunca al mismo tiempo que se actualiza el promedio.
 
-Por esa razón se decidió dividir el registro en tres structs
-independientes, cada uno guardado en su propio archivo binario
+Juntar estos tres en un solo registro haria que actualizar el promedio de un estudiante, algo que ocurre constantemente, 
+obliga también a leer y reescribir su nombre, su fecha de nacimiento, etc; aunque ninguno de esos datos haya cambiado.
+
+Por esa razón se decidió dividir el registro en tres structs independientes, cada uno guardado en su propio archivo binario
+\newline
 (\texttt{identidad.dat}, \texttt{academico.dat}, \texttt{contacto.dat}).
-El criterio de separación es la frecuencia y el patrón de uso de cada
-grupo de campos, no una división arbitraria. Esta técnica se conoce como
-particionamiento vertical y es la misma que aplican los motores de bases
-de datos relacionales cuando separan columnas de una entidad lógica en
-tablas físicas distintas por razones de rendimiento.
-
-Los tres structs se mantienen alineados por posición: el registro en la
-posición $i$ de \texttt{identidad.dat} corresponde al mismo estudiante que
-el registro en la posición $i$ de \texttt{academico.dat} y de
-\texttt{contacto.dat}. Gracias a esto, un único índice (carné apuntando a
-posición) basta para ubicar al estudiante en cualquiera de los tres
-archivos, sin necesidad de tres índices repetidos.
+El criterio de separación es la frecuencia y el patrón de uso de cada grupo de campos. 
+Nos basamos en como al crear bases de datos relacionales se separan los datos distintas tablas fisicas
+\newline
+Los tres structs se mantienen alineados por posición: 
+\begin{enumerate}
+    \item El registro en la posición $i$ de \texttt{identidad.dat}
+    \item El registro en la posición $i$ de \texttt{academico.dat}
+    \item El registro en la posición $i$ de \texttt{contacto.dat}
+\end{enumerate}
+Es decir, el $indice$ en cada archivo corresponde al mismso estudiante evitando generar 3 indices y busquedas distintas.
 
 \subsection{IdentidadEstudiante}
-Datos que identifican al estudiante como persona: carné, identificación,
-nombre, apellidos, fecha de nacimiento y sexo.
+Datos que identifican al estudiante como persona
 
-\begin{lstlisting}[style=pseudocodigo]
-typedef struct
-{
-    int                 carne;
-    char                identificacion[13];
-    TipoIdentificacion  tipoIdentificacion;
-    char                nombre[21];
-    char                apellido1[21];
-    char                apellido2[21];
-    Fecha               fechaNacimiento;
-    int                 sexo;
-}
-IdentidadEstudiante;
-\end{lstlisting}
+\input{pseudocodigo/identidad-estudiante}
 
 \subsection{AcademicoEstudiante}
-Datos de la situación académica actual del estudiante, que cambian cada
-período lectivo.
+Datos de la situación académica actual del estudiante, que cambian cada período lectivo.
 
-\begin{lstlisting}[style=pseudocodigo]
-typedef struct
-{
-    int    carne;
-    int    carrera;
-    int    nivelAcademico;
-    int    creditosAprobados;
-    float  promedio;
-    int    estado;
-}
-AcademicoEstudiante;
-\end{lstlisting}
+\input{pseudocodigo/academico-estudiante}
 
 \subsection{ContactoEstudiante}
-Datos usados para comunicarse con el estudiante, que cambian con poca
-frecuencia.
+Datos usados para comunicarse con el estudiante, que cambian con poca frecuencia.
 
-\begin{lstlisting}[style=pseudocodigo]
-typedef struct
-{
-    int   carne;
-    char  correo[41];
-    char  telefono[9];
-    char  direccion[81];
-}
-ContactoEstudiante;
-\end{lstlisting}
+\input{pseudocodigo/contacto-estudiante}

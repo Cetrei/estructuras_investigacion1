@@ -1,16 +1,20 @@
 \section{Diagramas}
-% TODO: incrustar aqui los diagramas finales (fuente en diagramas/src/*.mmd,
-% renderizados en diagramas/output/*.svg via "bun run diagrams:build").
-% Minimo requerido: Registro, Arreglo, Archivo secuencial, Archivo indexado.
 
-\subsection{Registro}
-% \includesvg[width=0.8\textwidth]{../diagramas/output/registro-estudiante.svg}
+Los diagramas del diseño se presentaron junto a la sección que justifica cada decisión, en vez de agruparlos
+al final separados de su explicación. Esta sección los reúne a modo de índice visual, para consultarlos
+sin tener que recorrer todo el informe.
 
-\subsection{Arreglo}
-% \includesvg[width=0.8\textwidth]{../diagramas/output/arreglo-estudiantes.svg}
-
-\subsection{Archivo secuencial}
-% \includesvg[width=0.8\textwidth]{../diagramas/output/archivo-secuencial.svg}
-
-\subsection{Archivo indexado}
-% \includesvg[width=0.8\textwidth]{../diagramas/output/archivo-indexado.svg}
+\begin{itemize}
+    \item \textbf{Mapa de posiciones en RAM} (figura~\ref{fig:mapa-posiciones-ram}, sección~\ref{sec:diseno-arreglo}):
+        la zona ordenada y la lista de recién ingresados del mapa por carné.
+    \item \textbf{Relación RAM-disco} (figura~\ref{fig:arreglo-estudiantes}, sección~\ref{sec:diseno-arreglo}):
+        cómo cada entrada del mapa en RAM apunta, mediante \texttt{offset}, a una posición en los tres archivos en disco.
+    \item \textbf{Cálculo del \texttt{offset}} (figura~\ref{fig:calculo-offset}, sección~\ref{sec:archivo-secuencial}):
+        cómo se ubica un registro dentro de un archivo de tamaño fijo a partir de su posición lógica.
+    \item \textbf{Alineación por posición lógica} (figura~\ref{fig:alineacion-posicion-logica}, sección~\ref{sec:archivo-secuencial}):
+        los tres archivos binarios comparten posición lógica por estudiante, sin necesitar una llave adicional entre ellos.
+    \item \textbf{Estructura interna de los mapas} (figura~\ref{fig:estructura-interna-mapas}, sección~\ref{sec:archivo-indexado}):
+        el flujo de búsqueda binaria en la zona ordenada y lineal en la lista de recién ingresados.
+    \item \textbf{Un registro, tres mapas} (figura~\ref{fig:registro-fisico-archivo-indexado}, sección~\ref{sec:archivo-indexado}):
+        los mapas por carné, identificación y apellido apuntando todos al mismo registro físico.
+\end{itemize}

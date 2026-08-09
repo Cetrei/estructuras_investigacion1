@@ -1,0 +1,17 @@
+%%{init: {'theme': 'base', 'themeVariables': {'fontSize': '15px'}}}%%
+flowchart TB
+
+    A["Registro fisico<br/>(estudiantes.dat / identidad.dat)"]
+    n1["Mapa por carne<br/>(Zona ordenada y nuevos)"]
+    n2["Mapa por identificacion<br/>(Zona ordenada y nuevos)"]
+    n3["Mapa de apellido<br/>Se construye por completo"]
+
+    A --> n1
+    A --> n2
+    A --> n3
+
+    classDef origen fill:#FFCDD2,stroke:#28253D,stroke-width:1px,color:#1a1a1a;
+    classDef mapa fill:#BBDEFB,stroke:#28253D,stroke-width:1px,color:#1a1a1a;
+
+    class A origen;
+    class n1,n2,n3 mapa;

@@ -7,11 +7,9 @@
 //   biblatex-apa    -> estilo APA para biblatex
 //   biber           -> backend de bibliografia (binario, se instala aparte)
 //   pgf (tikz)      -> \usepackage{tikz}, usado por apa7 internamente
-//   svg             -> \usepackage{svg}, para incrustar diagramas
-//   transparent     -> provee transparent.sty, requerido internamente por svg
-//   (oberdiek NO trae transparent.sty en TeX Live moderno, se separo a su
-//   propio paquete 'transparent'. Se deja oberdiek en la lista igual
-//   porque cubre otras dependencias transitivas comunes de hyperref/svg.)
+//   (svg NO se usa: los diagramas se incrustan ya renderizados a PDF por
+//   scripts/buildDiagrams.ts via \includegraphics, para no depender de
+//   Inkscape instalado en el sistema. Ver informe/formato.tex.)
 //   listings        -> \usepackage{listings}, bloques de pseudocodigo
 //   xcolor          -> \usepackage{xcolor}
 //   booktabs        -> \usepackage{booktabs}, tablas con lineas prolijas
@@ -47,9 +45,7 @@ const PAQUETES = [
   "biblatex-apa",
   "biber",
   "pgf",
-  "svg",
   "oberdiek",
-  "transparent",
   "trimspaces",
   "listings",
   "xcolor",

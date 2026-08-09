@@ -1,33 +1,95 @@
 % !TEX root = ../main.tex
 \section{Diseño del arreglo que almacenará los estudiantes}
+\label{sec:diseno-arreglo}
 
-El arreglo de registros completos no se carga en memoria principal: vive
-en disco, en los tres archivos binarios descritos en la sección anterior.
-Lo que sí reside en RAM en todo momento es un arreglo mucho más liviano,
-al que llamamos \textbf{mapa de posiciones}: guarda únicamente la llave de
-búsqueda, la posición física del registro en disco y su estado, sin el
-resto de los datos del estudiante (el funcionamiento completo de este
-mapa se detalla en la sección de archivo indexado).
+El arreglo de registros completos no se carga en memoria principal: está en disco, en los tres archivos binarios descritos en la sección anterior.
+Lo que sí reside en RAM en todo momento es un arreglo, al que llamamos \textbf{mapa de posiciones}: 
+guarda únicamente la llave de búsqueda, la posición física del registro en disco y su estado.
+El resto de los datos del estudiante deben extraerse del archivo.
 
-\subsection{Por qué cargar todo en memoria no escala}
+\subsection{Justificación de los números utilizados}
 
-\begin{longtable}{p{4.5cm} p{3cm} p{3cm} p{2cm}}
-\toprule
-Cantidad de estudiantes & Registro completo (3 archivos) & Solo mapas de posiciones (3 mapas) & Ahorro \\
-\midrule
-\endhead
-25\,000 & $\approx$ 6.2 MB & $\approx$ 1.2 MB & 5 veces \\
-100\,000 & $\approx$ 25 MB & $\approx$ 4.8 MB & 5 veces \\
-1\,000\,000 & $\approx$ 259 MB & $\approx$ 48 MB & 5 veces \\
-\bottomrule
-\end{longtable}
+Los tamaños que se usan en las estimaciones a continuación provienen directamente de los campos y tamaños definidos
+en la sección \ref{sec:justificacion-campos}. A continuacion el razonamiento de cada valor:
 
-El cálculo usa 259 bytes por estudiante (suma de los tres structs de la
-sección de diseño del registro, sin contar relleno de alineación) contra
-16 bytes por entrada de mapa (carné, posición y estado), multiplicado por
-tres mapas (por carné, por identificación, por apellido). Aunque un
-millón de registros completos (aproximadamente 259 MB) todavía cabría en
-la memoria de una máquina moderna, el diseño no depende de esa suposición:
-el costo en RAM de los mapas crece mucho más lento que el de los datos
-completos, por lo que la arquitectura sigue siendo viable sin importar
-cuánto crezca la matrícula de la universidad.
+\begin{enumerate}
+    \item Se revisan los tres \emph{structs} que componen el registro: \texttt{IdentidadEstudiante}, \texttt{AcademicoEstudiante} y \texttt{ContactoEstudiante}
+    \item Para cada campo se toma el tamaño indicado en la justificación (por ejemplo: \texttt{int carne} = 4 B)
+    \item Sumando los tamaños de los campos de cada \texttt{struct} se obtiene un tamaño por struct; 
+        sumando los tres structs se obtiene el tamaño total por estudiante almacenado en los archivos.
+    \item Para las entradas del mapa de posiciones se estima el espacio requerido por: la llave (carné), la posición dentro del archivo y un indicador de estado. 
+        Los valores utilizados para la estimación (4 B, 8 B y 4 B) son redondeos razonables.
+\end{enumerate}
+
+\subsubsection{Desglose exacto a partir de los structs definidos}
+
+Usando los tamaños de campo especificados en la sección \ref{sec:justificacion-campos} se obtiene el siguiente desglose:
+
+\begin{itemize}
+    \item \textbf{IdentidadEstudiante}: 
+        \begin{itemize}
+            \item \texttt{int carne} = 4 B 
+            (se elige 4 B ya que 1 B = 8 bits, y 4 B permiten representar enteros de hasta 2,147,483,647, suficiente para los carnés de estudiantes)
+            \item \texttt{char identificacion[13]} = 13 B
+            \item \texttt{char nombre[21]} = 21 B
+            \item \texttt{char apellidos[41]} = 41 B
+            \item \texttt{Fecha (3 ints)} = 12 B
+            \item \texttt{int sexo} = 4 B
+        \end{itemize}
+        Total identidad = 4 + 13 + 21 + 41 + 12 + 4 = \textbf{95 B}.
+
+    \item \textbf{AcademicoEstudiante}: seis campos numéricos (integers y float):\\
+        Total académico = $4 \times 5 + 4 = $ \textbf{24 B}
+    \item \textbf{ContactoEstudiante}: 
+        \begin{itemize}
+            \item \texttt{int carne} = 4 B
+            \item \texttt{char correo[41]} = 41 B
+            \item \texttt{char telefono[9]} = 9 B
+            \item \texttt{char direccion[81]} = 81 B
+        \end{itemize}
+        Total contacto = 4 + 41 + 9 + 81 = \textbf{135 B}.
+\end{itemize}
+
+Suma (registro completo por estudiante en los tres archivos): 95 + 24 + 135 = \textbf{254 B}.
+
+\subsubsection{Composición de una entrada del mapa de posiciones}
+\label{sec:composicion-entrada}
+
+Cada entrada del mapa contiene tres valores principales: 
+la llave de búsqueda (el carné), 
+la posición del registro dentro del archivo (cuántos bytes desde el inicio del archivo) 
+y un indicador de estado.
+
+Al hacer estimaciones se utilizan valores redondeados para facilitar el cálculo:
+
+\begin{itemize}
+    \item Llave (carné): 4 B
+    \item Posición en el archivo: 8 B (1 B = 8 bits, 8 B permiten representar posiciones de hasta 18,446,744,073,709,551,615 bytes, suficiente para archivos muy grandes)
+    \item Estado: 4 B (pequeño indicador/flag, 4 B es suficiente)
+\end{itemize}
+
+Sumando esos valores, cada entrada ocupa aproximadamente 16 B. 
+Manteniendo tres mapas distintos (por carné, por identificación y por apellido), el coste en memoria por estudiante es:
+
+\textbf{16 B por entrada $\times$ 3 = 48 B}
+
+Estas cifras son estimaciones orientativas usadas para comparar el tamaño relativo entre almacenar los registros completos en disco y mantener solo los mapas en RAM.
+
+\subsection{Por qué cargar todo en memoria no es viable}
+
+Almacenar los registros completos directamente en RAM escala de manera ineficiente a medida que crece el volumen de datos ($n$), consumiendo recursos esenciales del sistema. Por ello, reservar la memoria principal únicamente para el índice (mapa de posiciones) y consultar los detalles en disco por demanda permite optimizar drásticamente el espacio utilizado.
+
+\subsection{Resumen (valores aproximados)}
+
+Los valores de la tabla siguiente se obtienen aplicando las fórmulas:
+
+\begin{itemize}
+    \item Registro completo: 254 B $\times~n$
+    \item Mapas en RAM: 48 B $\times~n$
+\end{itemize}
+
+Se muestran tanto los bytes totales como la conversión a MiB (1 MiB = $2^{20}$ bytes).
+
+\input{tablas/comparacion-almacenamiento}
+
+\noindent\textbf{Interpretación:} Con las hipótesis indicadas, el contenido completo en disco ocupa aproximadamente 5.3 veces más espacio que los tres mapas en memoria. Aunque las cifras son estimaciones, ilustran que mantener solo los mapas en RAM reduce significativamente el uso de memoria sin perder la capacidad de localizar y recuperar registros desde disco.

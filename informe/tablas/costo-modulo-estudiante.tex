@@ -1,0 +1,63 @@
+{\small
+\begin{longtable}{p{4cm} p{6cm} p{3cm} p{2.2cm}}
+\toprule
+Función & Algoritmo & Costo real & Big O \\
+\midrule
+\endhead
+
+registrarEstudiante &
+    Inserción en el mapa más escritura de 3 registros de tamaño fijo &
+    $1 + 3$ &
+    $O(1)$\newline amortizado \\
+\addlinespace
+
+buscarEstudiantePorCarne &
+    Búsqueda en el mapa más 1 lectura en offset &
+    $\log n + 1$ &
+    $O(\log n)$ \\
+\addlinespace
+
+buscarEstudiantesPorApellido &
+    Búsqueda en el mapa de apellido más $k$ lecturas de coincidencias &
+    $\log n + k$ &
+    $O(\log n)$\newline$+ O(k)$ \\
+\addlinespace
+
+modificarEstudiante &
+    Búsqueda en el mapa más escritura en offset existente &
+    $\log n + 1$ &
+    $O(\log n)$ \\
+\addlinespace
+
+eliminarEstudianteLogico &
+    Búsqueda en el mapa más marcar \texttt{estado = 0} en mapa y archivo &
+    $\log n + 2$ &
+    $O(\log n)$ \\
+\addlinespace
+
+consultarExpedienteCompleto &
+    Búsqueda en el mapa más 3 lecturas (identidad, académico, contacto) &
+    $\log n + 3$ &
+    $O(\log n)$ \\
+\addlinespace
+
+mostrarTodosLosEstudiantes &
+    Recorrido secuencial completo &
+    $n$ &
+    $O(n)$ \\
+\addlinespace
+
+mostrarEstudiantesPorCarrera &
+    Recorrido secuencial con filtro &
+    $n$ comparaciones &
+    $O(n)$ \\
+\addlinespace
+
+actualizarPromedio\newline/ actualizarCreditosAprobados &
+    Búsqueda en el mapa más escritura en \texttt{academico.dat} &
+    $\log n + 1$ &
+    $O(\log n)$ \\
+
+\bottomrule
+\end{longtable}
+}

@@ -1,0 +1,31 @@
+%%{init: {'theme': 'base', 'themeVariables': {'fontSize': '15px'}}}%%
+flowchart TB
+
+    subgraph ARR["Archivo de registros de tamano fijo"]
+        direction LR
+        n1["0"]
+        n2["1"]
+        n3["2"]
+        n4["i"]
+        n5["4"]
+        n6["5"]
+        n7["6"]
+        n8["7"]
+        n1 --- n2 --- n3 --- n4 --- n5 --- n6 --- n7 --- n8
+    end
+
+    n10["offset = i x sizeof(struct)"]
+    n9["fread carga solo este registro a RAM"]
+
+    n10 -.-> n4
+    n4 --> n9
+
+    classDef celda fill:#ffffff,stroke:#28253D,stroke-width:1px,color:#1a1a1a;
+    classDef objetivo fill:#FF6D00,stroke:#28253D,stroke-width:2px,color:#ffffff;
+    classDef resultado fill:#ffae70,stroke:#28253D,stroke-width:1px,color:#1a1a1a;
+    classDef formula fill:#F9F9FB,stroke:#8fa8d9,stroke-width:1px,color:#1a1a1a;
+
+    class n1,n2,n3,n5,n6,n7,n8 celda;
+    class n4 objetivo;
+    class n9 resultado;
+    class n10 formula;

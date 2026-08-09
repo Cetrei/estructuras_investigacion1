@@ -1,0 +1,15 @@
+%%{init: {'theme': 'base', 'themeVariables': {'fontSize': '15px'}}}%%
+flowchart LR
+
+    subgraph S1["Estructura interna (Mapa de carne e identificacion)"]
+        direction LR
+        n5["Lista de recien ingresados<br/>Insercion O(1)<br/>Revision completa si falla"]
+        n6["Zona ordenada<br/>Busqueda binaria O(log n)"]
+        n5 --> n6
+    end
+
+    classDef nuevos fill:#BBDEFB,stroke:#28253D,stroke-width:1px,color:#1a1a1a;
+    classDef ordenada fill:#9fbed8,stroke:#28253D,stroke-width:1px,color:#1a1a1a;
+
+    class n5 nuevos;
+    class n6 ordenada;

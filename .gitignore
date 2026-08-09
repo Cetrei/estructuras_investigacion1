@@ -1,28 +1,59 @@
-# LaTeX build artifacts
-*.aux
-*.log
-*.out
-*.toc
-*.lof
-*.lot
-*.bbl
-*.bcf
-*.blg
-*.synctex.gz
-*.fdb_latexmk
-*.fls
-*.run.xml
-*.xdv
+# Politica: se ignora todo por defecto, y se declara explicitamente
+# lo que SI entra a git, en vez de mantener una lista de extensiones de
+# artefactos de build (que crece cada vez que latexmk/biber inventa una
+# extension nueva, como *.bbl-SAVE-ERROR).
+*
 
-# LaTeX local (instalado por scripts/installLatex.ts, ~1-2 GB, no va a git)
+# Carpetas de nivel raiz que se recorren normalmente (para que gitignore
+# no las trate como archivos y no entre a mirar su contenido)
+!*/
+
+# --- Carpetas explicitamente excluidas por completo ---
+# (build de LaTeX, TinyTeX local, cache de mermaid-cli, dependencias)
+.build/
 .texlive/
-
-# Node / Bun
+.cache/
 node_modules/
-bun.lockb
+
+# --- Codigo fuente ---
+!*.c
+!*.h
+!*.ts
+!*.md
+!*.tex
+!*.bib
+!*.mmd
+!*.svg
+!*.yml
+!*.yaml
+!*.json
+
+# --- Lockfile de Bun (build reproducible entre integrantes) ---
+!bun.lock
+
+# --- PDF de entrega, copiado a la raiz por scripts/buildPDF.ts ---
+# (ver config.yml: informe.outputDir: "."). Anclado a la raiz ("/") para
+# no des-ignorar PDFs sueltos en otras carpetas; el jobname es dinamico
+# (depende de informe.nombre), asi que no se hardcodea el nombre exacto.
+!/*.pdf
+
+# --- Diagramas renderizados (svg + pdf), incrustados en el informe ---
+# (ver scripts/buildDiagrams.ts e informe/formato.tex: se incluyen via
+# \includegraphics sobre el .pdf, no via el paquete svg/Inkscape).
+!diagramas/output/**
+
+# --- Assets versionados del informe (logo institucional, etc.) ---
+!informe/assets/**
+
+# --- Config de editor y tooling ---
+!.vscode/settings.json
+!.husky/**
+!.gitignore
+!commitlint.config.js
+
+# --- Datos de ejemplo versionados a mano, si los hay ---
+!data/.gitkeep
 
 # OS
 .DS_Store
 Thumbs.db
-
-*.pdf

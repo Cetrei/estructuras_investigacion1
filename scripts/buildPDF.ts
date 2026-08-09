@@ -6,6 +6,11 @@ const REPO_ROOT = `${import.meta.dir}/..`;
 const INFORME_DIR = `${REPO_ROOT}/informe`;
 const TEXLIVE_DIR = `${REPO_ROOT}/.texlive/.TinyTeX/bin`;
 const CONFIG_PATH = `${REPO_ROOT}/config.yml`;
+// Misma carpeta que .vscode/settings.json usa como latex-workshop.latex.outDir,
+// para que ambos flujos de compilacion (este script y la extension de VS Code)
+// dejen sus artefactos de build en el mismo lugar: dentro de informe/.build/,
+// separado del codigo fuente (informe/*.tex) pero sin salir de informe/.
+const BUILD_DIR = `${INFORME_DIR}/.build`;
 
 interface Config {
   informe: {
@@ -97,12 +102,19 @@ function armarEntorno(config: Config): EntornoCompilacion {
 }
 
 async function limpiarBuild(entorno: EntornoCompilacion) {
-  const limpieza = Bun.spawnSync([entorno.latex, "-C", `-jobname=${entorno.jobname}`, "main.tex"], {
-    cwd: INFORME_DIR,
-    stdout: "ignore",
-    stderr: "ignore",
-    env: entorno.env,
-  });
+  if (!existsSync(BUILD_DIR)) {
+    mkdirSync(BUILD_DIR, { recursive: true });
+  }
+
+  const limpieza = Bun.spawnSync(
+    [entorno.latex, "-C", `-outdir=${BUILD_DIR}`, `-jobname=${entorno.jobname}`, "main.tex"],
+    {
+      cwd: INFORME_DIR,
+      stdout: "ignore",
+      stderr: "ignore",
+      env: entorno.env,
+    }
+  );
   if (!limpieza.success) {
     console.warn("Aviso: no se pudo limpiar el estado previo de latexmk, se continua igual.");
   }
@@ -110,12 +122,15 @@ async function limpiarBuild(entorno: EntornoCompilacion) {
 
 function lanzarLatexmk(entorno: EntornoCompilacion) {
   try {
-    return Bun.spawn([entorno.latex, "-pdf", `-jobname=${entorno.jobname}`, "main.tex"], {
-      cwd: INFORME_DIR,
-      stdout: "inherit",
-      stderr: "inherit",
-      env: entorno.env,
-    });
+    return Bun.spawn(
+      [entorno.latex, "-pdf", `-outdir=${BUILD_DIR}`, `-jobname=${entorno.jobname}`, "main.tex"],
+      {
+        cwd: INFORME_DIR,
+        stdout: "inherit",
+        stderr: "inherit",
+        env: entorno.env,
+      }
+    );
   } catch {
     console.error("No se encontro latexmk (ni local ni en el PATH del sistema).");
     console.error("");
@@ -128,7 +143,7 @@ function lanzarLatexmk(entorno: EntornoCompilacion) {
 }
 
 function copiarPdfAOutput(config: Config, jobname: string) {
-  const pdfGenerado = `${INFORME_DIR}/${jobname}.pdf`;
+  const pdfGenerado = `${BUILD_DIR}/${jobname}.pdf`;
   const outputDir = `${REPO_ROOT}/${config.informe.outputDir}`;
   const pdfDestino = `${outputDir}/${jobname}.pdf`;
 
@@ -138,12 +153,12 @@ function copiarPdfAOutput(config: Config, jobname: string) {
   copyFileSync(pdfGenerado, pdfDestino);
 
   console.log("");
-  console.log(`Listo. PDF generado en informe/${jobname}.pdf`);
+  console.log(`Listo. PDF generado en informe/.build/${jobname}.pdf`);
   console.log(`Copia de entrega en ${config.informe.outputDir}/${jobname}.pdf`);
 }
 
 function borrarPdfInicial(jobname: string) {
-  const pdfGenerado = `${INFORME_DIR}/${jobname}.pdf`;
+  const pdfGenerado = `${BUILD_DIR}/${jobname}.pdf`;
   unlinkSync(pdfGenerado);
 }
 
