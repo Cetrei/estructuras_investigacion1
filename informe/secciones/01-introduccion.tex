@@ -1,36 +1,32 @@
 % !TEX root = ../main.tex
 \section{Introducción}
 
-Las organizaciones que administran grandes volúmenes de información,
-como universidades, bancos u hospitales, dependen de que esa información
-esté organizada de forma eficiente para poder consultarla, actualizarla
-y recuperarla sin demoras. Antes de construir cualquier sistema
-informático que cumpla esa función es necesario comprender el problema
-que se pretende resolver, identificar con precisión los datos que se van
-a administrar, diseñar las estructuras adecuadas para contenerlos y
-analizar la eficiencia de los algoritmos que van a manipularlos.
+En la actualidad, las organizaciones manejan grandes cantidades de
+información que deben mantenerse organizadas para facilitar su consulta,
+actualización, almacenamiento y recuperación. En instituciones como las
+universidades, esta necesidad adquiere especial importancia debido al
+volumen de datos personales y académicos que deben administrarse de forma
+constante.
 
-Este informe desarrolla ese proceso de diseño para un caso hipotético
-planteado como ejercicio académico: la Universidad XUNA, una institución
-ficticia de aproximadamente 25\,000 estudiantes que busca reemplazar un
-conjunto de formularios, hojas electrónicas y programas aislados por un
-Sistema de Gestión Académica centralizado. El caso exige administrar
-catorce datos por estudiante (identificación, nombre, información de
-contacto, situación académica, entre otros) y soportar operaciones como
-registrar, buscar por distintas llaves, modificar, eliminar y generar
-reportes sobre esa población estudiantil, bajo dos restricciones técnicas
-explícitas: el sistema debe construirse en C++ estructurado, sin
-Programación Orientada a Objetos y sin la Standard Template Library, y
-toda decisión de diseño debe documentarse junto con su costo
-computacional expresado en notación Big O.
+Antes de desarrollar un sistema informático es necesario comprender el
+problema que se desea resolver, identificar los datos que serán
+administrados y definir estructuras adecuadas para representarlos. De
+igual forma, se debe considerar la eficiencia de las operaciones que se
+realizarán sobre dicha información, debido a que distintas soluciones
+pueden requerir diferentes cantidades de tiempo y recursos.
 
-Este documento no implementa el sistema: propone y justifica su diseño.
-Se identifican y clasifican los datos que el caso exige administrar, se
-diseña el registro que representa a un estudiante, se diseña el arreglo
-que almacena esos registros en memoria, se identifican y documentan las
-funciones necesarias para resolver el problema junto con su costo
-computacional, y se propone tanto un archivo secuencial como un archivo
-indexado para persistir la información entre ejecuciones del programa.
-Cada una de estas decisiones se acompaña de su justificación técnica, de
-modo que el diseño resultante no sea solo una propuesta funcional, sino
-también una propuesta razonada.
+La presente investigación analiza el caso de la Universidad XUNA, una
+institución con aproximadamente 25\,000 estudiantes que busca reemplazar
+el uso de formularios impresos, hojas electrónicas y programas
+independientes por un Sistema de Gestión Académica centralizado. El
+sistema deberá permitir administrar información personal y académica de
+los estudiantes, además de realizar operaciones como registrar, buscar,
+modificar, consultar y generar reportes.
+
+A partir de este caso se estudiarán conceptos fundamentales relacionados
+con las estructuras de datos, entre ellos el dato, los Tipos de Datos
+Abstractos, los registros, los arreglos, las funciones, el costo
+computacional y los mecanismos de almacenamiento mediante archivos
+secuenciales e indexados. El objetivo es establecer una propuesta de
+diseño organizada y técnicamente justificada que sirva como base para el
+posterior desarrollo del sistema.

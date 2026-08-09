@@ -1,3 +1,92 @@
 % !TEX root = ../main.tex
 \section{Identificación de los datos presentes en el caso}
-% TODO: listar los catorce datos que pide la Oficina de Registro.
+
+A partir de los requerimientos establecidos por la Oficina de Registro,
+se identifican catorce datos principales que deberán almacenarse para
+representar la información de cada estudiante dentro del Sistema de
+Gestión Académica.
+
+Estos datos incluyen información de identificación personal, información
+de contacto y datos relacionados con la situación académica del
+estudiante. Cada uno cumple una función específica dentro de las
+operaciones que posteriormente realizará el sistema.
+
+\begin{longtable}{p{4cm} p{10cm}}
+\toprule
+Dato & Descripción \\
+\midrule
+\endhead
+
+Número de carné &
+Identificador asignado por la universidad a cada estudiante. Será uno de
+los principales datos utilizados para localizar y consultar un
+expediente. \\
+
+Número de identificación &
+Documento de identificación personal del estudiante. El sistema también
+deberá permitir búsquedas utilizando este dato. \\
+
+Nombre &
+Nombre o nombres del estudiante, necesarios para su identificación
+personal dentro del sistema. \\
+
+Apellidos &
+Apellidos del estudiante. Además de formar parte de su identificación,
+el caso establece que deberán poder realizarse búsquedas por apellido. \\
+
+Fecha de nacimiento &
+Fecha en la que nació el estudiante. Forma parte de la información
+personal que debe conservarse en su expediente. \\
+
+Sexo &
+Dato utilizado para registrar el sexo correspondiente al estudiante
+dentro de su información personal. \\
+
+Carrera &
+Carrera académica a la que pertenece el estudiante dentro de la
+universidad. Este dato permitirá, entre otras operaciones, mostrar
+estudiantes pertenecientes a una carrera específica. \\
+
+Nivel académico &
+Nivel académico en el que se encuentra actualmente el estudiante dentro
+de su proceso de formación. \\
+
+Correo electrónico &
+Dirección de correo utilizada como medio de contacto con el estudiante. \\
+
+Número telefónico &
+Número utilizado para contactar al estudiante por vía telefónica. \\
+
+Dirección &
+Información correspondiente al lugar de residencia o dirección registrada
+del estudiante. \\
+
+Cantidad de créditos aprobados &
+Cantidad total de créditos que el estudiante ha aprobado. Este dato puede
+actualizarse conforme avance en su carrera y también utilizarse para
+realizar comparaciones entre estudiantes. \\
+
+Promedio general &
+Promedio académico acumulado del estudiante. Debe poder actualizarse y
+utilizarse tanto para consultas individuales como para cálculos y
+reportes institucionales. \\
+
+Estado del estudiante &
+Indica la condición actual del estudiante dentro de la universidad y
+permite diferenciar, entre otros casos, estudiantes activos e inactivos. \\
+
+\bottomrule
+\end{longtable}
+
+Además de almacenarse como parte del expediente estudiantil, algunos de
+estos datos tienen una importancia particular debido a las operaciones
+solicitadas en el caso de estudio. El número de carné y el número de
+identificación deberán permitir localizar estudiantes de manera
+individual, mientras que los apellidos permitirán realizar búsquedas que
+pueden devolver varios resultados.
+
+Por otra parte, datos como la carrera, los créditos aprobados, el promedio
+general y el estado del estudiante serán utilizados en consultas,
+actualizaciones y generación de información académica. Esta identificación
+de los datos constituye la base para determinar, en la siguiente sección,
+la forma lógica en que cada uno será representado dentro del sistema.
