@@ -100,11 +100,31 @@ async function asegurarChromiumLocal(): Promise<string> {
 // mermaid-cli (mmdc) acepta un archivo de configuracion de Puppeteer via
 // --puppeteerConfigFile. Ahi es donde se le indica el executablePath exacto,
 // en vez de dejar que puppeteer-core intente adivinarlo.
+//
+// En runners de CI (GitHub Actions setea la variable estandar CI=true) el
+// kernel del contenedor no permite el sandbox de Chrome sin privilegios
+// adicionales (namespaces de usuario restringidos), lo que produce
+// "No usable sandbox!" y el proceso termina con SIGABRT. La solucion
+// estandar es lanzar Chrome con --no-sandbox, seguro en este contexto
+// porque el runner es una maquina efimera de un solo uso sin contenido
+// no confiable corriendo en paralelo. Fuera de CI (maquina de un
+// integrante) NO se agrega el flag, para no debilitar el sandbox sin
+// necesidad en un entorno persistente.
 function escribirConfigPuppeteer(executablePath: string) {
   mkdirSync(`${REPO_ROOT}/.cache`, { recursive: true });
+
+  const esCI = process.env.CI === "true" || process.env.CI === "1";
+
   writeFileSync(
     PUPPETEER_CONFIG_PATH,
-    JSON.stringify({ executablePath }, null, 2)
+    JSON.stringify(
+      {
+        executablePath,
+        ...(esCI ? { args: ["--no-sandbox", "--disable-setuid-sandbox"] } : {}),
+      },
+      null,
+      2
+    )
   );
 }
 
