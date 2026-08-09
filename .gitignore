@@ -27,6 +27,7 @@ node_modules/
 !*.yml
 !*.yaml
 !*.json
+!*.csv
 
 # --- Lockfile de Bun (build reproducible entre integrantes) ---
 !bun.lock

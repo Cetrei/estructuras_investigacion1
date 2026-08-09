@@ -1,0 +1,84 @@
+name: Publicar release de entrega
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      NOMBRE_ENTREGA: investigacion1_XUNA
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Instalar dependencias
+        run: bun install
+
+      - name: Instalar librerias de sistema requeridas por Chromium headless
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 \
+            libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 \
+            libgbm1 libasound2t64 libpango-1.0-0 libpangocairo-1.0-0
+
+      - name: Generar los diagramas (.svg y .pdf) a partir de diagramas/src/*.mmd
+        # bun run build:diagrams descarga su propio Chromium local en .cache/puppeteer/
+        # (ver scripts/buildDiagrams.ts), no requiere ningun paso previo de instalacion.
+        run: bun run build:diagrams
+
+      - name: Compilar el informe en LaTeX (pdflatex + biber vía latexmk)
+        uses: xu-cheng/latex-action@v3
+        with:
+          working_directory: informe
+          root_file: main.tex
+
+      - name: Instalar pandoc para el documento editable
+        run: sudo apt-get update && sudo apt-get install -y pandoc
+
+      - name: Generar el documento editable (.docx) a partir del informe
+        run: |
+          pandoc informe/main.tex \
+            --from=latex --to=docx \
+            --citeproc --bibliography=informe/referencias.bib \
+            --resource-path=informe \
+            --output=informe.docx
+
+      - name: Armar la carpeta de entrega
+        run: |
+          mkdir -p "$NOMBRE_ENTREGA/diagramas"
+
+          # 1. Informe tecnico en PDF
+          cp informe/main.pdf "$NOMBRE_ENTREGA/informe-tecnico.pdf"
+
+          # 2. Documento editable
+          cp informe.docx "$NOMBRE_ENTREGA/informe-editable.docx"
+
+          # 3. Diagramas utilizados durante el analisis (fuente .mmd + renders)
+          cp -r diagramas/src "$NOMBRE_ENTREGA/diagramas/fuente"
+          cp -r diagramas/output "$NOMBRE_ENTREGA/diagramas/renderizados"
+
+          # 4. Tabla resumen de funciones con su costo computacional
+          #    (fuente unica versionada en informe/tablas/tabla-resumen-funciones.csv,
+          #    consolidada a mano a partir de las tablas por modulo del informe para
+          #    que sea legible como entregable independiente, sin depender de un
+          #    compilador de LaTeX).
+          cp informe/tablas/tabla-resumen-funciones.csv "$NOMBRE_ENTREGA/tabla-resumen-funciones.csv"
+
+      - name: Comprimir la entrega
+        run: zip -r "$NOMBRE_ENTREGA.zip" "$NOMBRE_ENTREGA"
+
+      - name: Publicar el release con el zip adjunto
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ env.NOMBRE_ENTREGA }}.zip
+          generate_release_notes: true
