@@ -1,25 +1,19 @@
-# Politica: se ignora todo por defecto, y se declara explicitamente
-# lo que SI entra a git, en vez de mantener una lista de extensiones de
-# artefactos de build (que crece cada vez que latexmk/biber inventa una
-# extension nueva, como *.bbl-SAVE-ERROR).
 *
 
-# Carpetas de nivel raiz que se recorren normalmente (para que gitignore
-# no las trate como archivos y no entre a mirar su contenido)
+# Carpetas de nivel raiz que se recorren normalmente
 !*/
 
-# --- Carpetas explicitamente excluidas por completo ---
-# (build de LaTeX, TinyTeX local, cache de mermaid-cli, dependencias)
 .build/
 .texlive/
 .cache/
 node_modules/
 
-# --- Codigo fuente ---
+# Codigo fuente
 !*.c
 !*.h
 !*.ts
 !*.md
+docs/*
 !*.tex
 !*.bib
 !*.mmd
@@ -29,30 +23,24 @@ node_modules/
 !*.json
 !*.csv
 
-# --- Lockfile de Bun (build reproducible entre integrantes) ---
 !bun.lock
 
-# --- PDF de entrega, copiado a la raiz por scripts/buildPDF.ts ---
-# (ver config.yml: informe.outputDir: "."). Anclado a la raiz ("/") para
-# no des-ignorar PDFs sueltos en otras carpetas; el jobname es dinamico
-# (depende de informe.nombre), asi que no se hardcodea el nombre exacto.
+# PDF de entrega
 !/*.pdf
 
-# --- Diagramas renderizados (svg + pdf), incrustados en el informe ---
-# (ver scripts/buildDiagrams.ts e informe/formato.tex: se incluyen via
-# \includegraphics sobre el .pdf, no via el paquete svg/Inkscape).
+# Diagramas renderizados (svg + pdf)
 !diagramas/output/**
 
-# --- Assets versionados del informe (logo institucional, etc.) ---
+# Assets versionados del informe
 !informe/assets/**
 
-# --- Config de editor y tooling ---
+# Config de editor
 !.vscode/settings.json
 !.husky/**
 !.gitignore
 !commitlint.config.js
 
-# --- Datos de ejemplo versionados a mano, si los hay ---
+# Datos de ejemplo versionados 
 !data/.gitkeep
 
 # OS
