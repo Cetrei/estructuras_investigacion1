@@ -10,9 +10,12 @@ mucho más liviana que solo indique dónde está cada registro en disco: un arch
 
 \subsection{Funcionamiento general del mapa de posiciones}
 
-El patrón adoptado corresponde a ISAM (\emph{Indexed Sequential Access Method}), la técnica que usaban los primeros motores de bases de datos
-relacionales antes de que los árboles B y B+ se volvieran el estándar
-\autocite{silberschatz2019database}. 
+El patrón adoptado corresponde a ISAM (\emph{Indexed Sequential Access Method}), una técnica de organización de archivos
+desarrollada originalmente por IBM en la década de 1960 que combina acceso secuencial y directo mediante un índice
+sobre un archivo de datos ordenado \autocite{geeksforgeeks2025isam}.
+Silberschatz et al. describen este mismo concepto bajo el nombre \emph{index-sequential file}, como la estructura que precedió
+a los árboles B y B+ en los primeros motores de bases de datos relacionales, aunque sin usar la sigla ISAM
+\autocite{silberschatz2019database}.
 
 En este informe nos referimos a esta estructura simplemente como el \textbf{mapa de posiciones}, porque describe mejor lo que hace: 
 para cada llave de búsqueda (carné, identificación o apellido) guarda únicamente la posición física del registro en disco, 
