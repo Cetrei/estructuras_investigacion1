@@ -1,3 +1,114 @@
 % !TEX root = ../main.tex
 \section{Clasificación de los datos según su Tipo de Dato Abstracto}
-% TODO: para cada dato de la sección 3, indicar su TAD (Integer, String, Fecha, enum, etc.).
+
+Una vez identificados los datos que forman parte del expediente de cada
+estudiante, es necesario determinar la naturaleza de la información que
+representa cada uno. Esta clasificación permite definir posteriormente
+la forma en que los datos serán almacenados y manipulados dentro del
+programa.
+
+Para este diseño se consideran tipos como entero, real, cadena de
+caracteres, dato enumerado y fecha. La clasificación lógica de cada dato
+se presenta en la siguiente tabla.
+
+\begin{longtable}{p{3.8cm} p{3.2cm} p{7cm}}
+\toprule
+Dato & Tipo de dato & Justificación \\
+\midrule
+\endhead
+
+Número de carné &
+Entero &
+Representa el identificador numérico asignado por la universidad a cada
+estudiante. Se utilizará principalmente como llave de búsqueda y
+referencia del registro. \\
+
+Número de identificación &
+Cadena de caracteres &
+Aunque está compuesto principalmente por dígitos, funciona como un
+identificador y puede variar en longitud o incluir caracteres según el
+tipo de documento. Por esta razón se trata como información textual. \\
+
+Nombre &
+Cadena de caracteres &
+Está compuesto por una secuencia de caracteres alfabéticos y forma parte
+de la información personal del estudiante. \\
+
+Apellidos &
+Cadena de caracteres &
+Corresponde a información textual. En el diseño posterior podrá
+separarse en diferentes campos para facilitar búsquedas y ordenamientos. \\
+
+Fecha de nacimiento &
+Fecha &
+Está formada por varios valores relacionados entre sí, específicamente
+día, mes y año. Por esta razón resulta conveniente representarla mediante
+un tipo compuesto destinado al manejo de fechas. \\
+
+Sexo &
+Enumerado &
+Corresponde a un conjunto limitado de valores posibles, por lo que puede
+representarse mediante un dominio cerrado en lugar de utilizar texto
+libre. \\
+
+Carrera &
+Entero de referencia &
+Puede almacenarse mediante un código numérico que identifique una carrera
+dentro de un catálogo, evitando repetir el nombre completo de la carrera
+en cada registro. \\
+
+Nivel académico &
+Enumerado &
+Representa una categoría dentro de un conjunto limitado de niveles
+académicos definidos por el sistema. \\
+
+Correo electrónico &
+Cadena de caracteres &
+Puede contener letras, números y símbolos, por lo que debe almacenarse
+como una secuencia de caracteres. \\
+
+Número telefónico &
+Cadena de caracteres &
+Aunque contiene dígitos, no representa una cantidad sobre la cual deban
+realizarse operaciones matemáticas. Se utiliza únicamente como dato de
+contacto. \\
+
+Dirección &
+Cadena de caracteres &
+Contiene texto de longitud variable que puede incluir letras, números,
+espacios y otros caracteres. \\
+
+Cantidad de créditos aprobados &
+Entero &
+Representa una cantidad discreta de créditos acumulados por el estudiante
+y puede utilizarse en operaciones de comparación y actualización. \\
+
+Promedio general &
+Real &
+Puede contener una parte decimal, por lo que requiere un tipo numérico
+capaz de representar valores fraccionarios. \\
+
+Estado del estudiante &
+Enumerado &
+Representa un conjunto limitado de condiciones posibles del estudiante,
+como activo o inactivo. \\
+
+\bottomrule
+\end{longtable}
+
+Esta clasificación distingue entre los datos que representan cantidades
+numéricas y aquellos que, aunque puedan contener dígitos, funcionan
+únicamente como identificadores. Por ejemplo, el número telefónico y el
+número de identificación no se utilizan para realizar cálculos, mientras
+que la cantidad de créditos aprobados y el promedio general sí forman
+parte de operaciones académicas.
+
+También se identifican datos cuyo dominio está limitado a un conjunto
+determinado de valores, como el sexo, el nivel académico y el estado del
+estudiante. Estos pueden tratarse como tipos enumerados para evitar el
+almacenamiento de valores arbitrarios.
+
+La clasificación anterior establece la representación lógica de los
+datos. En las siguientes secciones estos tipos se traducen a estructuras
+concretas del lenguaje C++, respetando las restricciones del proyecto y
+las necesidades de almacenamiento del sistema.

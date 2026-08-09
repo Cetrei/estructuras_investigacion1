@@ -1,16 +1,106 @@
 % !TEX root = ../main.tex
 \section{Análisis del problema}
-% TODO: resumen del caso XUNA y las restricciones técnicas del enunciado.
+
+La Universidad XUNA cuenta con aproximadamente 25\,000 estudiantes
+distribuidos entre distintas sedes regionales y más de cincuenta
+carreras. Durante varios años, la información estudiantil ha sido
+administrada mediante formularios impresos, hojas electrónicas y
+programas desarrollados de manera independiente por diferentes
+departamentos.
+
+Esta forma de trabajo ha provocado que la información se encuentre
+distribuida en distintos medios y formatos. Como consecuencia, la
+universidad presenta problemas como expedientes duplicados, datos
+inconsistentes, errores en la información personal, dificultad para
+localizar estudiantes, retrasos durante los procesos de matrícula,
+lentitud para generar reportes y pérdida de información histórica.
+
+Para solucionar esta situación se plantea el desarrollo de un Sistema de
+Gestión Académica que centralice la información de los estudiantes y
+permita administrarla de forma uniforme. El sistema deberá manejar tanto
+datos personales como académicos y permitir operaciones de registro,
+búsqueda, consulta, modificación, eliminación y generación de reportes.
+
+El volumen de información también representa un aspecto importante del
+problema. Aunque actualmente la institución administra alrededor de
+25\,000 estudiantes, se espera que esta cantidad aumente con el paso del
+tiempo. Por esta razón, el diseño debe considerar no solamente la forma
+en que se representará cada estudiante, sino también cómo se almacenarán
+y localizarán grandes cantidades de registros sin realizar recorridos
+innecesarios sobre toda la información.
+
+Además, los datos no pueden permanecer únicamente en la memoria
+principal, ya que desaparecerían al finalizar la ejecución del programa.
+Por lo tanto, el sistema también requiere un mecanismo de almacenamiento
+permanente que permita conservar la información entre ejecuciones y
+recuperarla cuando sea necesario.
 
 \subsection{Restricciones técnicas del proyecto}
-% TODO: C++ estructurado, sin POO, sin STL, structs, fopen/fread/fwrite/fseek.
+
+La solución propuesta debe ajustarse a una serie de restricciones
+establecidas en el caso de estudio. El sistema deberá desarrollarse en
+C++ utilizando programación estructurada y no podrá emplear Programación
+Orientada a Objetos.
+
+Las entidades del sistema deberán representarse mediante registros
+definidos con \texttt{struct}, mientras que las operaciones deberán
+implementarse utilizando funciones independientes. De esta manera, no se
+permitirá utilizar clases, objetos, herencia, polimorfismo ni plantillas.
+
+Para el almacenamiento de información en memoria solamente se podrán
+utilizar arreglos nativos del lenguaje. Por esta razón, quedan excluidas
+las estructuras proporcionadas por la Standard Template Library (STL),
+como \texttt{vector}, \texttt{list}, \texttt{map}, \texttt{set},
+\texttt{queue} y otras estructuras similares.
+
+El almacenamiento permanente deberá realizarse preferentemente mediante
+archivos binarios. Para manipular estos archivos se podrán utilizar
+funciones como \texttt{fopen()}, \texttt{fclose()}, \texttt{fread()},
+\texttt{fwrite()}, \texttt{fseek()} y \texttt{ftell()}, permitiendo
+trabajar directamente con los registros almacenados en disco.
+
+Finalmente, todas las funciones propuestas deberán incluir un análisis
+de su costo computacional mediante notación Big O. Esto obliga a
+considerar desde la etapa de diseño la eficiencia de cada operación y no
+únicamente su funcionamiento.
 
 \subsection{Preguntas arquitectónicas planteadas}
-% TODO: desarrollar en prosa cada pregunta, citando por qué se descartó cada alternativa.
-% Ver docs/decisiones/ para el razonamiento ya resuelto.
-%
-% - ¿Cómo representar los datos sin POO ni STL?
-% - ¿Cómo evitar cargar todo el volumen en RAM a medida que crece?
-% - ¿Cómo buscar por varias llaves sin árboles?
-% - ¿Cómo evitar que cada inserción cueste O(n)?
-% - ¿Cómo persistir la información entre ejecuciones?
+
+A partir del problema y de las restricciones establecidas surgen varias
+decisiones que deben resolverse antes de implementar el sistema.
+
+En primer lugar, es necesario determinar cómo representar los diferentes
+datos que pertenecen a un estudiante sin utilizar clases ni otras
+herramientas propias de la Programación Orientada a Objetos. Para ello,
+el diseño deberá organizar los datos mediante registros y definir con
+claridad el tipo correspondiente a cada campo.
+
+También debe determinarse qué información resulta conveniente mantener
+en memoria principal. Cargar permanentemente todos los datos completos
+de los estudiantes puede aumentar considerablemente el consumo de
+memoria conforme crezca la matrícula, por lo que el diseño deberá buscar
+una forma de conservar en memoria únicamente la información necesaria
+para localizar los registros con eficiencia.
+
+Otro problema consiste en las búsquedas. El sistema debe localizar
+estudiantes por número de carné, número de identificación y apellido.
+Realizar un recorrido secuencial sobre todos los registros para cada
+consulta tendría un costo que aumenta directamente con la cantidad de
+estudiantes. Por esta razón, posteriormente será necesario definir
+estructuras auxiliares que permitan reducir el número de registros que
+deben examinarse durante una búsqueda.
+
+Asimismo, la incorporación de nuevos estudiantes debe realizarse sin
+obligar al sistema a reorganizar por completo la información después de
+cada inserción. El diseño deberá equilibrar el costo de registrar nuevos
+estudiantes con la necesidad de mantener búsquedas eficientes.
+
+Finalmente, se debe resolver la persistencia de la información. Los
+datos deberán almacenarse en archivos para evitar su pérdida al terminar
+el programa y, al mismo tiempo, deberá existir una estrategia que permita
+acceder directamente a los registros sin recorrer todo el archivo en
+cada consulta.
+
+Estas decisiones constituyen la base de las estructuras de datos,
+registros, arreglos, funciones y mecanismos de almacenamiento que se
+desarrollan en las siguientes secciones del informe.
