@@ -8,38 +8,16 @@
 Curso EIF207, Estructuras de Datos, Universidad Nacional de Costa Rica.
 Este repositorio contiene el trabajo de la Investigación 1: el diseño de un Sistema de Gestión Académica para la Universidad XUNA,
 
-## Contenido del repositorio
-
-```
-.
-├── informe/              Informe técnico en LaTeX
-│   ├── main.tex            documento principal (ensambla todas las secciones)
-│   ├── formato.tex           paquetes y configuración compartida
-│   ├── referencias.bib       fuentes citadas
-│   └── secciones/            un archivo .tex por cada apartado del informe
-│
-├── diagramas/            Diagramas de las estructuras propuestas
-│   ├── src/                fuentes Mermaid (.mmd)
-│   └── output/               SVG renderizados, incrustados en el informe
-│
-├── docs/decisiones/      Registro de decisiones de arquitectura (ADRs)
-│
-├── include/               Cabeceras (.h)
-│
-├── src/                    Implementacion (.c)
-│
-└── data/                    Archivos .dat
-```
-
 ## Compilar el informe
 
 ```bash
 bun install
+# Opcional instalar latex minimo si el sistema no lo tiene
+bun run install:latex
+# Generar a mano
 bun run build:pdf
 ```
-
-Genera `informe/main.pdf`. Requiere una distribución de LaTeX instalada, ver [`CONTRIBUTING.md`](./CONTRIBUTING.md)
-
-## Para el equipo
-
-Las instrucciones de flujo de trabajo en Git, cómo editar secciones del informe, generar diagramas y la configuración recomendada del editor están en [`CONTRIBUTING.md`](./CONTRIBUTING.md).
+### Generar diagramas
+```bash
+bun run build:diagrams
+```
