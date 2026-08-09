@@ -53,6 +53,12 @@ jobs:
           working_directory: informe
           root_file: main.tex
 
+      - name: Compilar la tabla resumen de funciones como PDF aparte
+        uses: xu-cheng/latex-action@v3
+        with:
+          working_directory: informe
+          root_file: tabla-resumen.tex
+
       - name: Instalar pandoc para el documento editable
         run: sudo apt-get update && sudo apt-get install -y pandoc
 
@@ -75,7 +81,10 @@ jobs:
           # 2. Documento editable
           cp informe.docx "$NOMBRE_ENTREGA/informe-editable.docx"
 
-          # 3. Diagramas utilizados durante el analisis (fuente .mmd + renders)
+          # 3. Tabla resumen de funciones, tambien como PDF aparte
+          cp informe/tabla-resumen.pdf "$NOMBRE_ENTREGA/tabla-resumen-funciones.pdf"
+
+          # 4. Diagramas utilizados durante el analisis (fuente .mmd + renders)
           cp -r diagramas/src "$NOMBRE_ENTREGA/diagramas/fuente"
           cp -r diagramas/output "$NOMBRE_ENTREGA/diagramas/renderizados"
 

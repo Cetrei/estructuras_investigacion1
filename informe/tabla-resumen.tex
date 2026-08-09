@@ -1,0 +1,31 @@
+\documentclass[12pt]{article}
+
+% Documento standalone: solo la tabla resumen de funciones, sin depender
+% de fancyhdr/apa7/biblatex (que si necesita informe/formato.tex, cargado
+% por main.tex). Se replican aqui unicamente los paquetes que la tabla
+% en si usa (longtable, booktabs) mas los basicos de idioma/fuente, para
+% no arrastrar comandos (\fancyhf, \printbibliography) que solo existen
+% en el contexto del informe completo.
+
+\usepackage[spanish,es-tabla]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{mathptmx}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage[margin=2.5cm]{geometry}
+
+\begin{document}
+
+\begin{center}
+{\Large \textbf{Resumen de funciones propuestas y su costo computacional}}\\[0.3em]
+{\large Investigación \#1, Sistema de Gestión Académica de la Universidad XUNA}\\[0.2em]
+Joanfer Hidalgo Chaves, Santiago Hernández Chaves, Justin Angulo Artavia\\
+EIF207, Estructuras de Datos, Escuela de Informática, Universidad Nacional de Costa Rica
+\end{center}
+
+\vspace{1em}
+
+\input{tablas/tabla-resumen-funciones}
+
+\end{document}
