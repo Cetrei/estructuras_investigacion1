@@ -76,6 +76,7 @@ jobs:
 
             soffice --headless --norestore --invisible \
               -env:UserInstallation=file:///tmp/loffice-profile \
+              --infilter="writer_pdf_import" \
               --convert-to docx:"MS Word 2007 XML" \
               --outdir "$salida" "$(pwd)/informe/main.pdf" 2>&1 || true
 
