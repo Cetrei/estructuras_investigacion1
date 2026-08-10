@@ -15,11 +15,6 @@ interface Config {
   };
 }
 
-interface IPerro {
-  nombre: string;
-  edad: number;
-}
-
 interface EntornoCompilacion {
   env: NodeJS.ProcessEnv;
   latex: string;

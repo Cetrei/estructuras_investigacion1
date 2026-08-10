@@ -1,18 +1,81 @@
+% !TEX root = ../main.tex
 \section{Diagramas}
+\label{sec:diagramas}
 
 \begin{itemize}
-    \item \textbf{Layout del registro} (figura~\ref{fig:registro-estudiante}, sección~\ref{sec:diseno-arreglo}):
+    \item \textbf{Layout del registro} (figura~\ref{fig:registro-estudiante}, sección \nameref{sec:diseno-arreglo}):
         los campos de los tres structs (\texttt{IdentidadEstudiante}, \texttt{AcademicoEstudiante}, \texttt{ContactoEstudiante}) con su tamaño y offset interno.
-    \item \textbf{Mapa de posiciones en RAM} (figura~\ref{fig:mapa-posiciones-ram}, sección~\ref{sec:diseno-arreglo}):
+    \item \textbf{Partición del registro en tres structs} (figura~\ref{fig:logica-del-particionamiento}, sección \nameref{sec:diseno-arreglo}):
+        cómo el registro \texttt{Estudiante} se reparte en \texttt{IdentidadEstudiante}, \texttt{AcademicoEstudiante} y \texttt{ContactoEstudiante}, alineados por posición lógica.
+    \item \textbf{Mapa de posiciones en RAM} (figura~\ref{fig:mapa-posiciones-ram}, sección \nameref{sec:diseno-arreglo}):
         la zona ordenada y la lista de recién ingresados del mapa por carné.
-    \item \textbf{Relación RAM-disco} (figura~\ref{fig:arreglo-estudiantes}, sección~\ref{sec:diseno-arreglo}):
+    \item \textbf{Relación RAM-disco} (figura~\ref{fig:arreglo-estudiantes}, sección \nameref{sec:diseno-arreglo}):
         cómo cada entrada del mapa en RAM apunta, mediante \texttt{offset}, a una posición en los tres archivos en disco.
-    \item \textbf{Cálculo del \texttt{offset}} (figura~\ref{fig:calculo-offset}, sección~\ref{sec:archivo-secuencial}):
+    \item \textbf{Diagramas de flujo de las funciones principales} (sección \nameref{sec:pseudocodigo}), uno por cada función descrita en el pseudocódigo.
+    \item \textbf{Cálculo del \texttt{offset}} (figura~\ref{fig:calculo-offset}, sección \nameref{sec:archivo-secuencial}):
         cómo se ubica un registro dentro de un archivo de tamaño fijo a partir de su posición lógica.
-    \item \textbf{Alineación por posición lógica} (figura~\ref{fig:alineacion-posicion-logica}, sección~\ref{sec:archivo-secuencial}):
+    \item \textbf{Alineación por posición lógica} (figura~\ref{fig:alineacion-posicion-logica}, sección \nameref{sec:archivo-secuencial}):
         los tres archivos binarios comparten posición lógica por estudiante, sin necesitar una llave adicional entre ellos.
-    \item \textbf{Estructura interna de los mapas} (figura~\ref{fig:estructura-interna-mapas}, sección~\ref{sec:archivo-indexado}):
+    \item \textbf{Estructura interna de los mapas} (figura~\ref{fig:estructura-interna-mapas}, sección \nameref{sec:archivo-indexado}):
         el flujo de búsqueda binaria en la zona ordenada y lineal en la lista de recién ingresados.
-    \item \textbf{Un registro, tres mapas} (figura~\ref{fig:registro-fisico-archivo-indexado}, sección~\ref{sec:archivo-indexado}):
+    \item \textbf{Un registro, tres mapas} (figura~\ref{fig:registro-fisico-archivo-indexado}, sección \nameref{sec:archivo-indexado}):
         los mapas por carné, identificación y apellido apuntando todos al mismo registro físico.
 \end{itemize}
+
+\subsection{Diagramas de flujo de las funciones principales}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.55\textwidth]{../diagramas/output/diagrama-registrarEstudiante.pdf}
+    \caption{Diagrama de flujo de \texttt{registrarEstudiante}}
+    \label{fig:diagrama-registrarEstudiante}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{../diagramas/output/diagrama-buscarEstudiantePorCarne.pdf}
+    \caption{Diagrama de flujo de \texttt{buscarEstudiantePorCarne}}
+    \label{fig:diagrama-buscarEstudiantePorCarne}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{../diagramas/output/diagrama-buscarPosicionPorCarne.pdf}
+    \caption{Diagrama de flujo de \texttt{buscarPosicionPorCarne}}
+    \label{fig:diagrama-buscarPosicionPorCarne}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.55\textwidth]{../diagramas/output/diagrama-buscarEstudiantesPorApellido.pdf}
+    \caption{Diagrama de flujo de \texttt{buscarEstudiantesPorApellido}}
+    \label{fig:diagrama-buscarEstudiantesPorApellido}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{../diagramas/output/diagrama-eliminarEstudianteLogico.pdf}
+    \caption{Diagrama de flujo de \texttt{eliminarEstudianteLogico}}
+    \label{fig:diagrama-eliminarEstudianteLogico}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{../diagramas/output/diagrama-registrarPosicionEnMapa.pdf}
+    \caption{Diagrama de flujo de \texttt{registrarPosicionEnMapa}}
+    \label{fig:diagrama-registrarPosicionEnMapa}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{../diagramas/output/diagrama-fusionarRecienIngresados.pdf}
+    \caption{Diagrama de flujo de \texttt{fusionarRecienIngresados}}
+    \label{fig:diagrama-fusionarRecienIngresados}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{../diagramas/output/diagrama-purgarInactivos.pdf}
+    \caption{Diagrama de flujo de \texttt{purgarInactivos}}
+    \label{fig:diagrama-purgarInactivos}
+\end{figure}

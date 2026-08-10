@@ -38,7 +38,7 @@ Este rdena por carné y se divide en dos partes:
         revisado de principio a fin cuando la zona ordenada no encuentra la llave buscada.
 \end{itemize}
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{../diagramas/output/estructura-interna-mapas.pdf}
     \caption{Estructura interna del mapa por carné o identificación: zona ordenada y lista de recién ingresados}
@@ -68,7 +68,7 @@ En vez de recorrer el archivo completo para esas búsquedas, se agregan dos mapa
         después de que hubo cambios desde la última vez que se armó (tambien al apagar para guardar el estado). 
 \end{itemize}
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{../diagramas/output/registro-fisico-archivo-indexado.pdf}
     \caption{Un mismo registro físico referenciado por los tres mapas: carné, identificación y apellido}
@@ -98,7 +98,7 @@ Como esta reorganización ocurre cada $0.1n$ inserciones, el costo de \texttt{re
 \]
 porque el costo dominante de la reorganización es un ordenamiento, no una copia lineal.
 
-Cada registro tiene un campo \texttt{marcadoParaPurga} independiente de su estado académico (sección~\ref{sec:justificacion-campos}).
+Cada registro tiene un campo \texttt{marcadoParaPurga} independiente de su estado académico (sección \nameref{sec:justificacion-campos}).
 Los registros marcados deben borrarse del sistema de archivos ya que son basura; por ello al apagar el sistema:
 \begin{itemize}
     \item Se purgan los registros inactivos de los tres archivos de datos

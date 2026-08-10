@@ -1,0 +1,20 @@
+%%{init: {'theme': 'base', 'themeVariables': {'fontSize': '14px'}}}%%
+flowchart TB
+
+    inicio["registrarPosicionEnMapa"]
+    agregar["Agrega al final en<br/>listaRecienIngresados"]
+    decision{"¿La longitud de la lista es<br/>mayor o igual al 10% de la<br/>longitud de la zonaOrdenada?"}
+    fusiona["Fusiona las listas"]
+    fin["Fin del metodo"]
+
+    inicio --> agregar --> decision
+    decision -->|Si| fusiona
+    decision -->|No| fin
+
+    classDef inicio fill:#ffffff,stroke:#28253D,stroke-width:1px,color:#1a1a1a;
+    classDef siguiente fill:#2ecc71,stroke:#28253D,stroke-width:1px,color:#1a1a1a;
+    classDef detiene fill:#e74c3c,stroke:#28253D,stroke-width:1px,color:#ffffff;
+
+    class inicio,agregar,decision inicio;
+    class fusiona siguiente;
+    class fin detiene;

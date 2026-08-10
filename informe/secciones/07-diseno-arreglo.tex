@@ -10,7 +10,7 @@ El resto de los datos del estudiante deben extraerse del archivo.
 \subsection{Justificación de los números utilizados}
 
 Los tamaños que se usan en las estimaciones a continuación provienen directamente de los campos y tamaños definidos
-en la sección \ref{sec:justificacion-campos}. A continuacion el razonamiento de cada valor:
+en la sección \nameref{sec:justificacion-campos}. A continuacion el razonamiento de cada valor:
 
 \begin{enumerate}
     \item Se revisan los tres \emph{structs} que componen el registro: \texttt{IdentidadEstudiante}, \texttt{AcademicoEstudiante} y \texttt{ContactoEstudiante}
@@ -23,7 +23,16 @@ en la sección \ref{sec:justificacion-campos}. A continuacion el razonamiento de
 
 \subsubsection{Desglose exacto a partir de los structs definidos}
 
-Usando los tamaños de campo especificados en la sección \ref{sec:justificacion-campos} se obtiene el siguiente desglose:
+Usando los tamaños de campo especificados en la sección \nameref{sec:justificacion-campos} se obtiene el siguiente desglose:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{../diagramas/output/diagrama-lógica-del-particionamiento.pdf}
+    \caption{Partición del registro \texttt{Estudiante} en los tres structs alineados por la misma posición lógica $i$}
+    \label{fig:logica-del-particionamiento}
+\end{figure}
+
+La figura~\ref{fig:logica-del-particionamiento} resume la idea: en vez de un único struct con los 14 campos, el registro se reparte en \texttt{IdentidadEstudiante}, \texttt{AcademicoEstudiante} y \texttt{ContactoEstudiante}, cada uno en su propio archivo, y los tres alineados por la posición $i$ del estudiante.
 
 \begin{itemize}
     \item \textbf{IdentidadEstudiante}: 
@@ -39,7 +48,7 @@ Usando los tamaños de campo especificados en la sección \ref{sec:justificacion
 
     \item \textbf{AcademicoEstudiante}: siete campos numéricos de 4 B cada uno, sumando 28 B.
         Total académico = $4 \times 7 = $ \textbf{28 B}
-        (justificación en la sección~\ref{sec:justificacion-campos})
+        (justificación en la sección \nameref{sec:justificacion-campos})
     \item \textbf{ContactoEstudiante}: 
         \begin{itemize}
             \item \texttt{int carne} = 4 B

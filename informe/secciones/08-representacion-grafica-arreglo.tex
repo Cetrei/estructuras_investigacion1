@@ -1,38 +1,38 @@
 \section{Representación gráfica del arreglo}
 
-La arquitectura de este arreglo se explica en las secciones~\ref{sec:diseno-arreglo} y~\ref{sec:archivo-indexado}; 
+La arquitectura de este arreglo se explica en las secciones \nameref{sec:diseno-arreglo} y \nameref{sec:archivo-indexado}; 
 para evitar redundancia en esta seccion no se explicara la justificacion aun.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.85\textwidth]{../diagramas/output/mapa-posiciones-ram.pdf}
     \caption{El mapa de posiciones como arreglo en RAM}
     \label{fig:mapa-posiciones-ram}
 \end{figure}
 
-La figura~\ref{fig:mapa-posiciones-ram} muestra las dos zonas del mapa por carné descritas en la subsección~\ref{sec:mapa-por-carne}, 
+La figura~\ref{fig:mapa-posiciones-ram} muestra las dos zonas del mapa por carné descritas en la subsección \nameref{sec:mapa-por-carne}, 
 cada una como un arreglo separado: 
 \begin{enumerate}
     \item La \textbf{zona ordenada} (índices 0 a 3), ordenada por carné.
     \item La \textbf{lista de recién ingresados} (índices 0 y 1, con los carnés 1015 y 1003 que todavía no se integraron a la zona ordenada).
 \end{enumerate}
 
-Cada celda, en cualquiera de las dos zonas, tiene la misma composición de tres campos justificada en la subsección~\ref{sec:composicion-entrada}. 
-La celda en rojo (carné 1004) es el mismo ejemplo de estado inactivo usado en la sección~\ref{sec:archivo-indexado}. La flecha punteada 
+Cada celda, en cualquiera de las dos zonas, tiene la misma composición de tres campos justificada en la subsección \nameref{sec:composicion-entrada}. 
+La celda en rojo (carné 1004) es el mismo ejemplo de estado inactivo usado en la sección \nameref{sec:archivo-indexado}. La flecha punteada 
 entre ambas zonas representa lo que ocurre cuando una búsqueda no encuentra la llave en la zona ordenada: también se revisa la lista 
 de recién ingresados antes de reportar que el estudiante no existe.
 
 \newpage
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.95\textwidth]{../diagramas/output/arreglo-estudiantes.pdf}
     \caption{Relación entre el mapa de posiciones en RAM y los archivos en disco}
     \label{fig:arreglo-estudiantes}
 \end{figure}
 
-La figura~\ref{fig:arreglo-estudiantes} agrega los tres archivos en disco (sección~\ref{sec:archivo-secuencial}) a la misma estructura de la
-figura anterior. Las flechas punteadas son el cálculo de \texttt{offset} de la sección~\ref{sec:archivo-secuencial} aplicado a
+La figura~\ref{fig:arreglo-estudiantes} agrega los tres archivos en disco (sección \nameref{sec:archivo-secuencial}) a la misma estructura de la
+figura anterior. Las flechas punteadas son el cálculo de \texttt{offset} de la sección \nameref{sec:archivo-secuencial} aplicado a
 cada entrada del mapa: 
 \begin{itemize}
     \item Los carnés 1001 y 1002 (índices 0 y 1 de la zona ordenada) apuntan directamente a las posiciones 0 y 1 en disco.
@@ -43,4 +43,4 @@ cada entrada del mapa:
 \end{itemize}
 
 Las tres columnas de cada posición (\texttt{identidad.dat}, \texttt{academico.dat}, \texttt{contacto.dat}) ilustran que comparten 
-índice sin necesitar una llave adicional entre ellas, también justificado en la sección~\ref{sec:archivo-secuencial}.
+índice sin necesitar una llave adicional entre ellas, también justificado en la sección \nameref{sec:archivo-secuencial}.

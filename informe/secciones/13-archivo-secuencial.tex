@@ -18,7 +18,7 @@ offset = posicion_logica * sizeof(struct)
 Con ese \texttt{offset}, se posiciona el cursor de lectura o escritura directamente sobre el registro deseado, 
 y se ejecuta la accion (leer o escribir) sin tocar el resto del archivo. 
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{../diagramas/output/calculo-offset.pdf}
     \caption{Cálculo del \texttt{offset} sobre un archivo de registros de tamaño fijo}
@@ -34,7 +34,7 @@ solo se traen a RAM los registros necesarios en el momento, siguiendo la posici�
 Los tres archivos comparten la misma posición lógica por estudiante, de modo que el registro en la posición $i$ de cada uno pertenece 
 siempre al mismo carné, sin necesidad de guardar una llave adicional dentro de cada struct para relacionarlos entre sí.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{../diagramas/output/alineacion-posicion-logica.pdf}
     \caption{Los tres archivos alineados por la misma posición lógica $i$}
