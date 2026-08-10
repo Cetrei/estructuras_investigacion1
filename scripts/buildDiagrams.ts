@@ -1,35 +1,3 @@
-// Renderiza los diagramas .mmd (Mermaid) a .svg y .pdf
-//
-// mmdc (mermaid-cli) usa Puppeteer por debajo, que a su vez necesita un
-// binario de Chromium para poder renderizar. Ese binario NO viene incluido
-// en el paquete npm de puppeteer-core (el que trae @mermaid-js/mermaid-cli
-// como dependencia): hay que descargarlo aparte.
-//
-// En vez de depender de que cada integrante tenga Chromium instalado en el
-// sistema (distinto en Windows/Mac/Linux), este script descarga un Chromium
-// propio dentro del repo, en .cache/puppeteer/ (mismo patron que
-// scripts/installLatex.ts usa para TinyTeX en .texlive/), usando
-// @puppeteer/browsers (el instalador oficial standalone, sin depender del
-// paquete 'puppeteer' completo).
-//
-// El auto-deteccion de rutas de puppeteer-core (buscar una revision fija
-// como 1108766 dentro de PUPPETEER_CACHE_DIR) no es confiable: la version
-// que en verdad se descarga con "chrome@stable" puede traer otra revision.
-// Por eso NO se confia en el auto-detect: se pide a @puppeteer/browsers la
-// ruta exacta del ejecutable ya instalado, y se la pasa a mmdc de forma
-// explicita mediante un archivo de configuracion de Puppeteer
-// (--puppeteerConfigFile), que es el mecanismo soportado por mermaid-cli
-// para esto.
-//
-// Se genera un .pdf por cada diagrama ademas del .svg: el informe lo
-// incluye via \includegraphics (informe/formato.tex), NO via \includesvg
-// del paquete svg, porque ese paquete necesita invocar el binario de
-// Inkscape instalado en el sistema para convertir el svg a pdf en tiempo
-// de compilacion -- justo lo que este proyecto evita usando el Chromium
-// local via Puppeteer, igual que ya se usa para renderizar el .mmd a .svg.
-// El .svg se sigue generando igual (se versiona, es diffable y sirve para
-// previsualizar el diagrama en el editor).
-
 import { existsSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
 import { readdirSync } from "node:fs";
 import { join, basename } from "node:path";
@@ -57,10 +25,6 @@ async function ejecutar(cmd: string[]) {
   return proceso.exited;
 }
 
-// Resuelve la ruta del ejecutable de Chrome ya instalado en CACHE_DIR para
-// la plataforma y build actuales. Si no esta instalado, lo descarga primero.
-// Esta es la unica fuente de verdad para la ruta: nunca se adivina ni se
-// hardcodea un numero de revision.
 async function asegurarChromiumLocal(): Promise<string> {
   const platform = detectBrowserPlatform();
   if (!platform) {
@@ -97,19 +61,6 @@ async function asegurarChromiumLocal(): Promise<string> {
   return instalado.executablePath;
 }
 
-// mermaid-cli (mmdc) acepta un archivo de configuracion de Puppeteer via
-// --puppeteerConfigFile. Ahi es donde se le indica el executablePath exacto,
-// en vez de dejar que puppeteer-core intente adivinarlo.
-//
-// En runners de CI (GitHub Actions setea la variable estandar CI=true) el
-// kernel del contenedor no permite el sandbox de Chrome sin privilegios
-// adicionales (namespaces de usuario restringidos), lo que produce
-// "No usable sandbox!" y el proceso termina con SIGABRT. La solucion
-// estandar es lanzar Chrome con --no-sandbox, seguro en este contexto
-// porque el runner es una maquina efimera de un solo uso sin contenido
-// no confiable corriendo en paralelo. Fuera de CI (maquina de un
-// integrante) NO se agrega el flag, para no debilitar el sandbox sin
-// necesidad en un entorno persistente.
 function escribirConfigPuppeteer(executablePath: string) {
   mkdirSync(`${REPO_ROOT}/.cache`, { recursive: true });
 

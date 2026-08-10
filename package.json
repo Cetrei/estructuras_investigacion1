@@ -4,9 +4,12 @@
   "version": "0.1.0",
   "scripts": {
     "typecheck": "tsc --noEmit",
+
+    "clean:build": "rm -rf build",
     
     "build:diagrams": "bun run scripts/buildDiagrams.ts",
     "build:pdf": "bun run scripts/buildPDF.ts",
+    "build:all": "bun run build:diagrams && bun run build:pdf",
     "install:latex": "bun run scripts/installLatex.ts",
     
     "prepare": "husky"

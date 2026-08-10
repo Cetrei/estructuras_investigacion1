@@ -2,5 +2,4 @@ informe:
   nombre: "Investigacion #1"
 
   # Carpeta donde se copia el PDF final, relativa a la raiz del repo.
-  # "." significa la raiz del repo.
   outputDir: "."

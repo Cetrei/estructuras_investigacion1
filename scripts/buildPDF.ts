@@ -6,10 +6,6 @@ const REPO_ROOT = `${import.meta.dir}/..`;
 const INFORME_DIR = `${REPO_ROOT}/informe`;
 const TEXLIVE_DIR = `${REPO_ROOT}/.texlive/.TinyTeX/bin`;
 const CONFIG_PATH = `${REPO_ROOT}/config.yml`;
-// Misma carpeta que .vscode/settings.json usa como latex-workshop.latex.outDir,
-// para que ambos flujos de compilacion (este script y la extension de VS Code)
-// dejen sus artefactos de build en el mismo lugar: dentro de informe/.build/,
-// separado del codigo fuente (informe/*.tex) pero sin salir de informe/.
 const BUILD_DIR = `${INFORME_DIR}/.build`;
 
 interface Config {
@@ -61,10 +57,6 @@ function sanearNombreArchivo(nombre: string): string {
     .toLowerCase();
 }
 
-/* TinyTeX instala los binarios dentro de .texlive/.TinyTeX/bin/<arch>/,
- * donde <arch> varia segun el sistema (windows, x86_64-linux, universal-darwin).
- * Buscamos la primera carpeta que exista ahi adentro.
- */
 function resolverBinDirLocal(): string | null {
   if (!existsSync(TEXLIVE_DIR)) return null;
   const carpetas = readdirSync(TEXLIVE_DIR);

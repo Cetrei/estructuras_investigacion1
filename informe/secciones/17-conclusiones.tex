@@ -1,3 +1,18 @@
 \section{Conclusiones}
-% TODO: cierre. Retomar la cita del Director del Proyecto en el caso de estudio
-% ("el verdadero objetivo es comprender...") y conectar con las decisiones tomadas.
+
+El caso de la Universidad XUNA muestra que los problemas administrativos descritos al inicio 
+(expedientes duplicados, información inconsistente, búsquedas lentas) no se resuelven simplemente centralizando los datos,
+sino decidiendo con cuidado cómo se representan y cómo se accede a ellos. Esa fue la línea que guió todo el diseño propuesto en este informe.
+
+Separar el registro en tres structs, en vez de un bloque único, salió de mirar qué tan seguido cambia cada dato y quién lo usa junto con qué, no de una preferencia de diseño. 
+
+Lo mismo con el mapa de posiciones: no tiene sentido cargar 25\,000 expedientes completos en RAM si alcanza con guardar el carné, la posición en disco y el estado de cada uno.
+
+El patrón ISAM terminó siendo lo que conecta arreglo, archivo secuencial y archivo indexado entre sí: 
+la zona ordenada resuelve la búsqueda en $O(\log n)$, 
+la lista de recién ingresados evita reordenar el archivo en cada matrícula nueva, 
+y el offset calculado a partir del tamaño fijo del registro es lo que permite llegar directo a un registro en disco sin recorrer los demás.
+
+En conjunto, estas decisiones muestran que el diseño de estructuras de datos no depende únicamente de que una solución funcione, 
+sino de que su costo computacional se mantenga razonable a medida que la cantidad dato crece. 
+Ese es el criterio que se aplicó en cada función documentada a lo largo del informe, y el que deberá mantenerse durante la implementación del sistema en el resto del semestre.

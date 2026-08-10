@@ -13,8 +13,7 @@ mucho más liviana que solo indique dónde está cada registro en disco: un arch
 El patrón adoptado corresponde a ISAM (\emph{Indexed Sequential Access Method}), una técnica de organización de archivos
 desarrollada originalmente por IBM en la década de 1960 que combina acceso secuencial y directo mediante un índice
 sobre un archivo de datos ordenado \autocite{geeksforgeeks2025isam}.
-Silberschatz et al. describen este mismo concepto bajo el nombre \emph{index-sequential file}, como la estructura que precedió
-a los árboles B y B+ en los primeros motores de bases de datos relacionales, aunque sin usar la sigla ISAM
+Silberschatz et al. describen este mismo concepto bajo el nombre \emph{index-sequential file}, como uno de los esquemas de índice más antiguos usados en sistemas de bases de datos, cuyo rendimiento se degrada al crecer el archivo y que por eso fue superado por el índice B+-tree, aunque sin usar la sigla ISAM
 \autocite{silberschatz2019database}.
 
 En este informe nos referimos a esta estructura simplemente como el \textbf{mapa de posiciones}, porque describe mejor lo que hace: 
@@ -46,8 +45,11 @@ Este rdena por carné y se divide en dos partes:
     \label{fig:estructura-interna-mapas}
 \end{figure}
 
-La figura~\ref{fig:estructura-interna-mapas} resume el flujo de búsqueda: primero se intenta en la zona ordenada
-con búsqueda binaria y, solo si no aparece ahí, se revisa la lista de recién ingresados de principio a fin.
+La figura~\ref{fig:estructura-interna-mapas} muestra un ejemplo concreto de este flujo: al buscar el carné 1007 sobre la zona ordenada, 
+la búsqueda binaria primero evalúa el índice 2 (carné 1004); como 1007 es mayor, descarta la mitad izquierda y continúa en la mitad 
+derecha, donde el índice 3 (carné 1007) coincide y termina la búsqueda en dos comparaciones. Si ninguna comparación hubiera coincidido, 
+el algoritmo caería en la lista de recién ingresados y la recorrería de principio a fin, como lo indican los carnés 1015, 1003 y 1020 
+del ejemplo.
 
 Cada entrada del mapa ocupa únicamente el carné, la posición en disco y el estado, no el registro completo. 
 Eso es lo que permite que el mapa quepa en RAM aunque los datos completos no quepan.
@@ -73,8 +75,9 @@ En vez de recorrer el archivo completo para esas búsquedas, se agregan dos mapa
     \label{fig:registro-fisico-archivo-indexado}
 \end{figure}
 
-La figura~\ref{fig:registro-fisico-archivo-indexado} muestra cómo los tres mapas apuntan al mismo registro físico en
-\texttt{identidad.dat}: no existen tres copias de los datos, solo tres formas distintas de localizar la misma posición.
+La figura~\ref{fig:registro-fisico-archivo-indexado} muestra un ejemplo concreto: la entrada del mapa por carné (1002), la del mapa por 
+identificación (118640022) y la del mapa por apellido (Alvarado) apuntan las tres a la posición 1 de \texttt{identidad.dat}, donde vive 
+el mismo registro físico (Ana Alvarado). No existen tres copias de los datos, solo tres formas distintas de localizar la misma posición.
 
 El mapa por apellido funciona asi ya que tipicamente son para realizar reportes o en general algo que sucede de vez en cuando,
 podria ejecutarse el sistema y no usarse, por que armar un mapa nuevo que se actualice por cada estudiante no vale la pena

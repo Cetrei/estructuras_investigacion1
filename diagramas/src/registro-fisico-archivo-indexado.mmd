@@ -1,17 +1,42 @@
 %%{init: {'theme': 'base', 'themeVariables': {'fontSize': '15px'}}}%%
 flowchart TB
 
-    A["Registro fisico<br/>(estudiantes.dat / identidad.dat)"]
-    n1["Mapa por carne<br/>(Zona ordenada y nuevos)"]
-    n2["Mapa por identificacion<br/>(Zona ordenada y nuevos)"]
-    n3["Mapa de apellido<br/>Se construye por completo"]
+    subgraph MC["Mapa por carne"]
+        direction LR
+        mc0["idx 0<br/>carne 1001<br/>pos 0"]
+        mc1["idx 1<br/>carne 1002<br/>pos 1"]
+        mc2["idx 2<br/>carne 1004<br/>pos 3"]
+        mc0 --- mc1 --- mc2
+    end
 
-    A --> n1
-    A --> n2
-    A --> n3
+    subgraph MI["Mapa por identificacion"]
+        direction LR
+        mi0["idx 0<br/>id 205870341<br/>pos 0"]
+        mi1["idx 1<br/>id 118640022<br/>pos 1"]
+        mi0 --- mi1
+    end
 
-    classDef origen fill:#FFCDD2,stroke:#28253D,stroke-width:1px,color:#1a1a1a;
-    classDef mapa fill:#BBDEFB,stroke:#28253D,stroke-width:1px,color:#1a1a1a;
+    subgraph MA["Mapa por apellido"]
+        direction LR
+        ma0["idx 0<br/>Alvarado<br/>pos 1"]
+        ma1["idx 1<br/>Rojas<br/>pos 0"]
+        ma0 --- ma1
+    end
 
-    class A origen;
-    class n1,n2,n3 mapa;
+    subgraph REG["identidad.dat"]
+        direction LR
+        r0["pos 0<br/>carne 1001<br/>Luis Rojas<br/>id 205870341"]
+        r1["pos 1<br/>carne 1002<br/>Ana Alvarado<br/>id 118640022"]
+        r2["pos 2<br/>..."]
+        r0 --- r1 --- r2
+    end
+
+    mc1 -.->|pos 1| r1
+    mi1 -.->|pos 1| r1
+    ma0 -.->|pos 1| r1
+
+    classDef celda fill:#ffffff,stroke:#28253D,stroke-width:1px,color:#1a1a1a;
+    classDef objetivo fill:#FF6D00,stroke:#28253D,stroke-width:2px,color:#ffffff;
+
+    class mc0,mc2,mi0,ma1,r0,r2 celda;
+    class mc1,mi1,ma0,r1 objetivo;

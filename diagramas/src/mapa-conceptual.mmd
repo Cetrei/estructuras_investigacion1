@@ -1,0 +1,32 @@
+%%{init: {'theme': 'base', 'themeVariables': {'fontSize': '15px'}}}%%
+flowchart TB
+
+    D["Dato"]
+    T["Tipo de Dato Abstracto"]
+    R["Registro"]
+    A["Arreglo"]
+    F["Función"]
+    C["Costo computacional"]
+    S["Archivo secuencial"]
+    I["Archivo indexado"]
+
+    D -->|se clasifica según su| T
+    T -->|define el tipo de cada campo del| R
+    D -->|se agrupan como campos de un| R
+    R -->|se almacenan en posiciones consecutivas de un| A
+    A -->|se manipula mediante| F
+    F -->|se analiza según su| C
+    R -->|se almacena de forma permanente en un| S
+    S -->|se accede por posición mediante| F
+    S -->|se acelera agregando un| I
+    I -->|mantiene en RAM un| A
+
+    classDef base fill:#e8f0fe,stroke:#4472c4,stroke-width:1px,color:#1a1a1a;
+    classDef estructura fill:#eafaf1,stroke:#27ae60,stroke-width:1px,color:#1a1a1a;
+    classDef proceso fill:#fdf2e3,stroke:#c9822a,stroke-width:1px,color:#1a1a1a;
+    classDef almacenamiento fill:#fbe4e4,stroke:#c0392b,stroke-width:1px,color:#1a1a1a;
+
+    class D,T base;
+    class R,A estructura;
+    class F,C proceso;
+    class S,I almacenamiento;

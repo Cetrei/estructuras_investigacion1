@@ -5,13 +5,7 @@
 \usepackage{mathptmx}
 
 \usepackage{graphicx}
-% Los diagramas se incrustan como PDF pre-renderizado por
-% scripts/buildDiagrams.ts (mmdc/Puppeteer), no via el paquete svg:
-% ese paquete requiere invocar el binario de Inkscape instalado en el
-% sistema en tiempo de compilacion (no disponible ni garantizado en todas
-% las maquinas Windows/Linux del equipo). \includegraphics simplemente
-% incluye el .pdf ya generado, sin depender de nada externo al repo.
-
+% Los diagramas se incrustan como PDF pre-renderizado
 \usepackage{listings}
 \usepackage{xcolor}
 
@@ -25,8 +19,12 @@
     keepspaces=true
 }
 
-\usepackage{longtable}
 \usepackage{booktabs}
+
+% Margenes de 2.5cm en todas las direcciones
+\usepackage{collcell}
+\usepackage{seqsplit}
+\newcolumntype{F}[1]{>{\collectcell\seqsplit}p{#1}<{\endcollectcell}}
 
 \usepackage{hyperref}
 \hypersetup{
@@ -40,12 +38,9 @@
 \DeclareLanguageMapping{spanish}{spanish-apa}
 \addbibresource{referencias.bib}
 
-% Header limpio: apa7 en modo stu solo debe mostrar el numero de
-% pagina (sin running head/shorttitle), mas el logo institucional
-% en la esquina superior derecha. Se sobreescribe explicitamente
-% por si la clase reactivara el shorttitle en el header.
+% Header limpio: apa7 pagina mas el logo institucional
 \fancyhf{}
-\fancyhead[R]{\IfFileExists{assets/logo-una.png}{\includegraphics[height=1cm]{assets/logo-una.png}}{}}
+\fancyhead[R]{\IfFileExists{assets/logo.png}{\includegraphics[height=1cm]{assets/logo.png}}{}}
 \fancyfoot[C]{\thepage}
 
 % Punto centralizado para overrides de encabezados (h1-h5)

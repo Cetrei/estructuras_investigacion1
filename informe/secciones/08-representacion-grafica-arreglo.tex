@@ -10,15 +10,17 @@ para evitar redundancia en esta seccion no se explicara la justificacion aun.
     \label{fig:mapa-posiciones-ram}
 \end{figure}
 
-La figura~\ref{fig:mapa-posiciones-ram} muestra las dos zonas del mapa por carné descritas en la subsección~\ref{sec:mapa-por-carne} 
-aparecen como dos arreglos separados: 
+La figura~\ref{fig:mapa-posiciones-ram} muestra las dos zonas del mapa por carné descritas en la subsección~\ref{sec:mapa-por-carne}, 
+cada una como un arreglo separado: 
 \begin{enumerate}
-    \item La \textbf{zona ordenada} (índices 0 a 3)
-    \item La \textbf{lista de recién ingresados} (índice 0, con el carné 1015 que todavía no fue integrado)
+    \item La \textbf{zona ordenada} (índices 0 a 3), ordenada por carné.
+    \item La \textbf{lista de recién ingresados} (índices 0 y 1, con los carnés 1015 y 1003 que todavía no se integraron a la zona ordenada).
 \end{enumerate}
 
 Cada celda, en cualquiera de las dos zonas, tiene la misma composición de tres campos justificada en la subsección~\ref{sec:composicion-entrada}. 
-La celda en rojo (carné 1004) es el mismo ejemplo de estado inactivo usado en la sección~\ref{sec:archivo-indexado}.
+La celda en rojo (carné 1004) es el mismo ejemplo de estado inactivo usado en la sección~\ref{sec:archivo-indexado}. La flecha punteada 
+entre ambas zonas representa lo que ocurre cuando una búsqueda no encuentra la llave en la zona ordenada: también se revisa la lista 
+de recién ingresados antes de reportar que el estudiante no existe.
 
 \newpage
 
@@ -33,9 +35,11 @@ La figura~\ref{fig:arreglo-estudiantes} agrega los tres archivos en disco (secci
 figura anterior. Las flechas punteadas son el cálculo de \texttt{offset} de la sección~\ref{sec:archivo-secuencial} aplicado a
 cada entrada del mapa: 
 \begin{itemize}
-    \item El carné 1007 (zona ordenada, índice 3) apunta a la posición 2 en disco
-    \item El carné 1004 (inactivo) apunta a la posición 3
-    \item El carné 1015 (lista de recién ingresados) apunta a la posición 4, la más reciente
+    \item Los carnés 1001 y 1002 (índices 0 y 1 de la zona ordenada) apuntan directamente a las posiciones 0 y 1 en disco.
+    \item El carné 1007 (índice 3 de la zona ordenada) en cambio apunta a la posición 2, y el carné 1004 (inactivo) a la posición 3: 
+        el índice dentro del mapa no siempre coincide con la posición física en disco, que es justo la razón por la que cada entrada 
+        guarda su propio \texttt{offset} en vez de asumir que ambos números son el mismo.
+    \item El carné 1015 (lista de recién ingresados) apunta a la posición 4, la más reciente.
 \end{itemize}
 
 Las tres columnas de cada posición (\texttt{identidad.dat}, \texttt{academico.dat}, \texttt{contacto.dat}) ilustran que comparten 

@@ -1,15 +1,44 @@
 %%{init: {'theme': 'base', 'themeVariables': {'fontSize': '15px'}}}%%
-flowchart LR
+flowchart TB
 
-    subgraph S1["Estructura interna (Mapa de carne e identificacion)"]
+    q["Buscar carne 1007"]
+
+    subgraph ORD["Zona ordenada - busqueda binaria O(log n)"]
         direction LR
-        n5["Lista de recien ingresados<br/>Insercion O(1)<br/>Revision completa si falla"]
-        n6["Zona ordenada<br/>Busqueda binaria O(log n)"]
-        n5 --> n6
+        o0["idx 0<br/>1001"]
+        o1["idx 1<br/>1002"]
+        o2["idx 2<br/>1004"]
+        o3["idx 3<br/>1007"]
+        o4["idx 4<br/>1009"]
+        o0 --- o1 --- o2 --- o3 --- o4
     end
 
-    classDef nuevos fill:#BBDEFB,stroke:#28253D,stroke-width:1px,color:#1a1a1a;
-    classDef ordenada fill:#9fbed8,stroke:#28253D,stroke-width:1px,color:#1a1a1a;
+    p1["medio = idx 2 -> 1004 menor que 1007, buscar mitad derecha"]
+    p2["medio = idx 3 -> 1007 = 1007, encontrado"]
 
-    class n5 nuevos;
-    class n6 ordenada;
+    q --> p1 --> p2
+    p1 -.-> o2
+    p2 -.-> o3
+
+    subgraph REC["Lista de recien ingresados - recorrido lineal O(n)"]
+        direction LR
+        n0["idx 0<br/>1015"]
+        n1["idx 1<br/>1003"]
+        n2["idx 2<br/>1020"]
+        n0 --- n1 --- n2
+    end
+
+    nota["Si no aparece en la zona ordenada,<br/>se revisa aqui de principio a fin"]
+    o4 -.-> nota
+    nota -.-> n0
+
+    classDef celda fill:#ffffff,stroke:#28253D,stroke-width:1px,color:#1a1a1a;
+    classDef objetivo fill:#FF6D00,stroke:#28253D,stroke-width:2px,color:#ffffff;
+    classDef descartado fill:#F1F1F4,stroke:#8a8a99,stroke-width:1px,color:#5a5a5a;
+    classDef formula fill:#F9F9FB,stroke:#8fa8d9,stroke-width:1px,color:#1a1a1a;
+
+    class o0,o1,o4 celda;
+    class o2 descartado;
+    class o3 objetivo;
+    class n0,n1,n2 celda;
+    class q,p1,p2,nota formula;

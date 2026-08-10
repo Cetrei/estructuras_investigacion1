@@ -1,35 +1,3 @@
-// Instala TinyTeX local unicamente en el repo
-//
-// Paquetes instalados (derivados de informe/formato.tex y main.tex):
-//   apa7            -> \documentclass[stu]{apa7}
-//   babel + spanish -> \usepackage[spanish,es-tabla]{babel}
-//   biblatex        -> \usepackage[style=apa,backend=biber]{biblatex}
-//   biblatex-apa    -> estilo APA para biblatex
-//   biber           -> backend de bibliografia (binario, se instala aparte)
-//   pgf (tikz)      -> \usepackage{tikz}, usado por apa7 internamente
-//   (svg NO se usa: los diagramas se incrustan ya renderizados a PDF por
-//   scripts/buildDiagrams.ts via \includegraphics, para no depender de
-//   Inkscape instalado en el sistema. Ver informe/formato.tex.)
-//   listings        -> \usepackage{listings}, bloques de pseudocodigo
-//   xcolor          -> \usepackage{xcolor}
-//   booktabs        -> \usepackage{booktabs}, tablas con lineas prolijas
-//   (longtable se usa via \usepackage{longtable} pero no es un paquete
-//   instalable por separado en TeX Live moderno: viene incluido en
-//   collection-fontsrecommended / dependencias de apa7 y biblatex.
-//   Intentar 'tlmgr install longtable' falla con "not present in
-//   repository" en cualquier mirror.)
-//   hyperref        -> \usepackage{hyperref}, enlaces internos
-//   threeparttable  -> usado por apa7
-//   caption         -> usado por apa7
-//   fancyhdr        -> usado por apa7 (encabezados)
-//   endfloat        -> usado por apa7 (figuras/tablas al final, modo stu)
-//   scalerel        -> usado por apa7
-//   etoolbox        -> usado por apa7 y varios paquetes mas
-//   geometry        -> margenes
-//   collection-fontsrecommended -> fuentes (latin-modern, etc.)
-//   trimspaces, comment, bigfoot, totpages, ifmtarg -> dependencias
-//   transitivas comunes de apa7/biblatex
-
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 
 const REPO_ROOT = `${import.meta.dir}/..`;
@@ -53,6 +21,8 @@ const PAQUETES = [
   "hyperref",
   "threeparttable",
   "caption",
+  "collcell",
+  "seqsplit",
   "fancyhdr",
   "endfloat",
   "scalerel",

@@ -1,7 +1,7 @@
 {\small
-\begin{longtable}{p{4cm} p{5.5cm} p{3cm} p{2.2cm}}
+\begin{longtable}{F{4cm} p{5.5cm} p{3cm} p{2.2cm}}
 \toprule
-Función & Algoritmo & Costo real & Big O \\
+\multicolumn{1}{p{4cm}}{Función} & Algoritmo & Costo real & Big O \\
 \midrule
 \endhead
 
@@ -29,7 +29,7 @@ buscarPosicionesPorCampo &
     $O(\log n)$\newline$+ O(k)$ \\
 \addlinespace
 
-construirMapaPorCampo\newline(apellido) &
+construirMapaPorCampo(apellido) &
     Copia de $n$ llaves más ordenamiento &
     $n + n\log n$ &
     $O(n \log n)$ \\
