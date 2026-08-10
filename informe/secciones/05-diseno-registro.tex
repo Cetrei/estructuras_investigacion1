@@ -18,7 +18,19 @@ El enunciado de la investigación pide administrar catorce datos por estudiante:
     \item promedio general
     \item estado del estudiante. 
 \end{itemize}
+
+Nota: en el diseño final este último campo se separó en dos, \texttt{estadoAcademico} y \texttt{marcadoParaPurga}
+(sección~\ref{sec:justificacion-campos}), ya que ambas cosas no son lo mismo: el estado académico de un
+estudiante (activo, en pausa, con permiso) no implica que su expediente deba eliminarse.
+
 El enunciado no propone ninguna forma de organizar estos datos, solo se pide que sean guardados.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.95\textwidth]{../diagramas/output/registro-estudiante.pdf}
+    \caption{Layout de campos de los tres structs del registro Estudiante, con offsets internos}
+    \label{fig:registro-estudiante}
+\end{figure}
 
 La primer idea del equipo fue juntar los catorce campos en un único registro. Al revisarlo con cuidado apareció un problema: 
 \begin{quote}

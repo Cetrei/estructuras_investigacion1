@@ -28,18 +28,18 @@ Usando los tamaños de campo especificados en la sección \ref{sec:justificacion
 \begin{itemize}
     \item \textbf{IdentidadEstudiante}: 
         \begin{itemize}
-            \item \texttt{int carne} = 4 B 
-            (se elige 4 B ya que 1 B = 8 bits, y 4 B permiten representar enteros de hasta 2,147,483,647, suficiente para los carnés de estudiantes)
+            \item \texttt{int carne} = 4 B
             \item \texttt{char identificacion[13]} = 13 B
             \item \texttt{char nombre[21]} = 21 B
             \item \texttt{char apellidos[41]} = 41 B
             \item \texttt{Fecha (3 ints)} = 12 B
             \item \texttt{int sexo} = 4 B
         \end{itemize}
-        Total identidad = 4 + 13 + 21 + 41 + 12 + 4 = \textbf{95 B}.
+        Suma cruda de campos = 4 + 13 + 21 + 41 + 12 + 4 = 95 B. El compilador agrega \emph{padding} para alinear los campos de 4 B, por lo que el \texttt{sizeof(IdentidadEstudiante)} real es \textbf{96 B}, no 95 B.
 
-    \item \textbf{AcademicoEstudiante}: seis campos numéricos (integers y float):\\
-        Total académico = $4 \times 5 + 4 = $ \textbf{24 B}
+    \item \textbf{AcademicoEstudiante}: siete campos numéricos de 4 B cada uno, sumando 28 B.
+        Total académico = $4 \times 7 = $ \textbf{28 B}
+        (justificación en la sección~\ref{sec:justificacion-campos})
     \item \textbf{ContactoEstudiante}: 
         \begin{itemize}
             \item \texttt{int carne} = 4 B
@@ -47,10 +47,10 @@ Usando los tamaños de campo especificados en la sección \ref{sec:justificacion
             \item \texttt{char telefono[9]} = 9 B
             \item \texttt{char direccion[81]} = 81 B
         \end{itemize}
-        Total contacto = 4 + 41 + 9 + 81 = \textbf{135 B}.
+        Suma cruda = 4 + 41 + 9 + 81 = 135 B. Por la misma razón de alineación, \texttt{sizeof(ContactoEstudiante)} real es \textbf{136 B}.
 \end{itemize}
 
-Suma (registro completo por estudiante en los tres archivos): 95 + 24 + 135 = \textbf{254 B}.
+Suma con padding real (registro completo por estudiante en los tres archivos): 96 + 28 + 136 = \textbf{260 B}.
 
 \subsubsection{Composición de una entrada del mapa de posiciones}
 \label{sec:composicion-entrada}
@@ -64,8 +64,8 @@ Al hacer estimaciones se utilizan valores redondeados para facilitar el cálculo
 
 \begin{itemize}
     \item Llave (carné): 4 B
-    \item Posición en el archivo: 8 B (1 B = 8 bits, 8 B permiten representar posiciones de hasta 18,446,744,073,709,551,615 bytes, suficiente para archivos muy grandes)
-    \item Estado: 4 B (pequeño indicador/flag, 4 B es suficiente)
+    \item Posición en el archivo: 8 B
+    \item Estado: 4 B
 \end{itemize}
 
 Sumando esos valores, cada entrada ocupa aproximadamente 16 B. 
@@ -84,7 +84,7 @@ Almacenar los registros completos directamente en RAM escala de manera ineficien
 Los valores de la tabla siguiente se obtienen aplicando las fórmulas:
 
 \begin{itemize}
-    \item Registro completo: 254 B $\times~n$
+    \item Registro completo: 260 B $\times~n$
     \item Mapas en RAM: 48 B $\times~n$
 \end{itemize}
 
@@ -92,4 +92,5 @@ Se muestran tanto los bytes totales como la conversión a MiB (1 MiB = $2^{20}$ 
 
 \input{tablas/comparacion-almacenamiento}
 
-\noindent\textbf{Interpretación:} Con las hipótesis indicadas, el contenido completo en disco ocupa aproximadamente 5.3 veces más espacio que los tres mapas en memoria. Aunque las cifras son estimaciones, ilustran que mantener solo los mapas en RAM reduce significativamente el uso de memoria sin perder la capacidad de localizar y recuperar registros desde disco.
+\noindent\textbf{Interpretación:} Con las hipótesis indicadas, el contenido completo en disco ocupa aproximadamente 5 veces más espacio que los tres mapas en memoria. 
+Aunque las cifras son estimaciones, ilustran que mantener solo los mapas en RAM reduce significativamente el uso de memoria sin perder la capacidad de localizar y recuperar registros desde disco.

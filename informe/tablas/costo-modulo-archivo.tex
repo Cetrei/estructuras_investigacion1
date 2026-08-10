@@ -6,20 +6,20 @@
 \endhead
 
 leerRegistroEnOffset &
-    \texttt{fseek} más \texttt{fread} de un registro de tamaño fijo &
+    Se posiciona en el offset con \texttt{fseek} y lee un registro con \texttt{fread} &
     $1$ operación\newline de E/S &
     $O(1)$ \\
 \addlinespace
 
 escribirRegistroEnOffset &
-    \texttt{fseek} más \texttt{fwrite} de un registro de tamaño fijo &
+    Se posiciona en el offset con \texttt{fseek} y escribe un registro con \texttt{fwrite} &
     $1$ operación\newline de E/S &
     $O(1)$ \\
 \addlinespace
 
 purgarInactivos &
-    Recorrido secuencial de $n$ registros, reescritura de los activos
-    ($a \leq n$) y reconstrucción de 3 mapas &
+    Recorre los $n$ registros, copia los que siguen activos
+    ($a \leq n$) a archivos nuevos y reconstruye los 3 mapas &
     $n + a + n\log n$ &
     $O(n \log n)$ \\
 

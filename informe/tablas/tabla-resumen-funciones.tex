@@ -17,76 +17,76 @@
 
 \multicolumn{4}{c}{\textit{Módulo archivo (persistencia)}} \\
 \midrule
-abrirArchivo(nombre, modo) & Llamada directa a \texttt{fopen} & 1 operación de E/S & $O(1)$ \\
+abrirArchivo(nombre, modo) & Abre el archivo binario con \texttt{fopen} & 1 operación de E/S & $O(1)$ \\
 \addlinespace
-cerrarArchivo(fp) & Llamada directa a \texttt{fclose} & 1 operación de E/S & $O(1)$ \\
+cerrarArchivo(fp) & Cierra el archivo con \texttt{fclose} & 1 operación de E/S & $O(1)$ \\
 \addlinespace
-calcularOffset(posicion, tamRegistro) & Multiplicación directa & 1 operación & $O(1)$ \\
+calcularOffset(posicion, tamRegistro) & Multiplica la posición por el tamaño del registro & 1 operación & $O(1)$ \\
 \addlinespace
-leerRegistroEnOffset(fp, offset, destino) & \texttt{fseek} más \texttt{fread} de un registro de tamaño fijo & 1 operación de E/S & $O(1)$ \\
+leerRegistroEnOffset(fp, offset, destino) & Se posiciona en el offset con \texttt{fseek} y lee un registro con \texttt{fread} & 1 operación de E/S & $O(1)$ \\
 \addlinespace
-escribirRegistroEnOffset(fp, offset, registro) & \texttt{fseek} más \texttt{fwrite} de un registro de tamaño fijo & 1 operación de E/S & $O(1)$ \\
+escribirRegistroEnOffset(fp, offset, registro) & Se posiciona en el offset con \texttt{fseek} y escribe un registro con \texttt{fwrite} & 1 operación de E/S & $O(1)$ \\
 \addlinespace
-agregarRegistroAlFinal(fp, registro) & \texttt{fseek} al final más \texttt{fwrite} & 1 operación de E/S & $O(1)$ \\
+agregarRegistroAlFinal(fp, registro) & Se posiciona al final del archivo y escribe con \texttt{fwrite} & 1 operación de E/S & $O(1)$ \\
 \addlinespace
-contarRegistros(fp, tamRegistro) & \texttt{ftell} sobre el tamaño del archivo dividido entre el tamaño del struct & 1 operación & $O(1)$ \\
+contarRegistros(fp, tamRegistro) & Divide el tamaño del archivo (\texttt{ftell}) entre el tamaño del struct & 1 operación & $O(1)$ \\
 \addlinespace
-purgarInactivos() & Recorrido secuencial de $n$ registros, reescritura de los activos ($a \leq n$) y reconstrucción de 3 mapas & $n + a + n\log n$ & $O(n\log n)$ \\
+purgarInactivos() & Recorre los $n$ registros, copia los que siguen activos ($a \leq n$) a archivos nuevos y reconstruye los 3 mapas & $n + a + n\log n$ & $O(n\log n)$ \\
 \addlinespace
 
 \multicolumn{4}{c}{\textit{Módulo de mapas de posiciones}} \\
 \midrule
-cargarMapaDePosiciones() & Lectura secuencial del archivo \texttt{.idx} o reconstrucción desde los archivos de datos & $n$ & $O(n)$ \\
+cargarMapaDePosiciones() & Lee el archivo \texttt{.idx} de forma secuencial, o reconstruye el mapa desde los archivos de datos si no existe & $n$ & $O(n)$ \\
 \addlinespace
-buscarPosicionPorCarne(carne) & Binaria en zona ordenada, lineal en lista de recién ingresados si no hay coincidencia & $\log n + k$ & $O(\log n) + O(k)$ \\
+buscarPosicionPorCarne(carne) & Busca con búsqueda binaria en la zona ordenada; si no aparece, revisa uno por uno la lista de recién ingresados & $\log n + k$ & $O(\log n) + O(k)$ \\
 \addlinespace
-registrarPosicionEnMapa(carne, posicion) & Inserción al final de la lista de recién ingresados & 1 operación (amortizado) & $O(1)$ amortizado \\
+registrarPosicionEnMapa(carne, posicion) & Agrega la nueva entrada al final de la lista de recién ingresados; cada $0.1n$ inserciones dispara la fusión & 1 operación en promedio & $O(\log n)$ en promedio \\
 \addlinespace
-fusionarRecienIngresados() & Mezcla ordenada de zona ordenada ($n$) y lista de recién ingresados ($k$) & $(n+k)\log(n+k)$ & $O(n\log n)$ \\
+fusionarRecienIngresados() & Ordena solo los $k$ recién ingresados y los mezcla en un solo recorrido con la zona ordenada ($n$), que ya estaba ordenada & $k\log k + n$ & $O(n + k\log k)$ \\
 \addlinespace
-marcarInactivoEnMapa(carne) & Búsqueda en el mapa más escritura de un campo & $\log n + 1$ & $O(\log n)$ \\
+marcarInactivoEnMapa(carne) & Busca la entrada en el mapa y le cambia un campo & $\log n + 1$ & $O(\log n)$ \\
 \addlinespace
-construirMapaPorCampo(campo) & Copia de $n$ llaves más ordenamiento & $n + n\log n$ & $O(n\log n)$ \\
+construirMapaPorCampo(campo) & Copia las $n$ llaves del campo indicado y las ordena & $n + n\log n$ & $O(n\log n)$ \\
 \addlinespace
-buscarPosicionesPorCampo(campo, valor) & Binaria en zona ordenada, lineal en lista de recién ingresados & $\log n + k$ & $O(\log n) + O(k)$ \\
+buscarPosicionesPorCampo(campo, valor) & Busca con búsqueda binaria en la zona ordenada y recorre la lista de recién ingresados & $\log n + k$ & $O(\log n) + O(k)$ \\
 \addlinespace
-guardarMapasEnDisco() & Escritura secuencial de las $n$ entradas de cada mapa & $n$ & $O(n)$ \\
+guardarMapasEnDisco() & Escribe las $n$ entradas de cada mapa en orden & $n$ & $O(n)$ \\
 \addlinespace
 
 \multicolumn{4}{c}{\textit{Módulo estudiante}} \\
 \midrule
-registrarEstudiante(datos) & Inserción en el mapa más escritura de 3 registros de tamaño fijo & $1 + 3$ & $O(1)$ amortizado \\
+registrarEstudiante(datos) & Inserta la posición en el mapa y escribe los 3 registros de tamaño fijo & $1 + 3$ & $O(\log n)$ en promedio \\
 \addlinespace
-buscarEstudiantePorCarne(carne) & Búsqueda en el mapa más 1 lectura en offset & $\log n + 1$ & $O(\log n)$ \\
+buscarEstudiantePorCarne(carne) & Busca la posición en el mapa y lee el registro en ese offset & $\log n + 1$ & $O(\log n)$ \\
 \addlinespace
-buscarEstudiantePorIdentificacion(id) & Búsqueda en el mapa de identificación más 1 lectura en offset & $\log n + 1$ & $O(\log n)$ \\
+buscarEstudiantePorIdentificacion(id) & Busca la posición en el mapa de identificación y lee el registro en ese offset & $\log n + 1$ & $O(\log n)$ \\
 \addlinespace
-buscarEstudiantesPorApellido(apellido) & Búsqueda en el mapa de apellido más $k$ lecturas de coincidencias & $\log n + k$ & $O(\log n) + O(k)$ \\
+buscarEstudiantesPorApellido(apellido) & Busca en el mapa de apellido y lee cada una de las $k$ coincidencias & $\log n + k$ & $O(\log n) + O(k)$ \\
 \addlinespace
-modificarEstudiante(carne, nuevosDatos) & Búsqueda en el mapa más escritura en offset existente & $\log n + 1$ & $O(\log n)$ \\
+modificarEstudiante(carne, nuevosDatos) & Busca la posición en el mapa y sobrescribe el registro existente en ese offset & $\log n + 1$ & $O(\log n)$ \\
 \addlinespace
-eliminarEstudianteLogico(carne) & Búsqueda en el mapa más marcar \texttt{estado = 0} en mapa y archivo & $\log n + 2$ & $O(\log n)$ \\
+eliminarEstudianteLogico(carne) & Busca la posición en el mapa y marca \texttt{marcadoParaPurga = 1} tanto en el mapa como en el archivo & $\log n + 2$ & $O(\log n)$ \\
 \addlinespace
-mostrarTodosLosEstudiantes() & Recorrido secuencial completo & $n$ & $O(n)$ \\
+mostrarTodosLosEstudiantes() & Recorre el archivo completo de principio a fin & $n$ & $O(n)$ \\
 \addlinespace
-mostrarEstudiantesPorCarrera(carrera) & Recorrido secuencial con filtro & $n$ comparaciones & $O(n)$ \\
+mostrarEstudiantesPorCarrera(carrera) & Recorre el archivo completo y filtra por carrera & $n$ comparaciones & $O(n)$ \\
 \addlinespace
-actualizarPromedio(carne, promedio) & Búsqueda en el mapa más escritura en \texttt{academico.dat} & $\log n + 1$ & $O(\log n)$ \\
+actualizarPromedio(carne, promedio) & Busca la posición en el mapa y sobrescribe el valor en \texttt{academico.dat} & $\log n + 1$ & $O(\log n)$ \\
 \addlinespace
-actualizarCreditosAprobados(carne, creditos) & Búsqueda en el mapa más escritura en \texttt{academico.dat} & $\log n + 1$ & $O(\log n)$ \\
+actualizarCreditosAprobados(carne, creditos) & Busca la posición en el mapa y sobrescribe el valor en \texttt{academico.dat} & $\log n + 1$ & $O(\log n)$ \\
 \addlinespace
-consultarExpedienteCompleto(carne) & Búsqueda en el mapa más 3 lecturas (identidad, académico, contacto) & $\log n + 3$ & $O(\log n)$ \\
+consultarExpedienteCompleto(carne) & Busca la posición en el mapa y lee los tres registros (identidad, académico, contacto) & $\log n + 3$ & $O(\log n)$ \\
 \addlinespace
 
 \multicolumn{4}{c}{\textit{Módulo reportes (agregados y mantenimiento)}} \\
 \midrule
-calcularPromedioInstitucional() & Recorrido secuencial con contador & $n$ sumas más 1 división & $O(n)$ \\
+calcularPromedioInstitucional() & Recorre todos los registros sumando y al final divide entre el total & $n$ sumas más 1 división & $O(n)$ \\
 \addlinespace
-encontrarMayorPromedio() & Recorrido secuencial con máximo & $n$ comparaciones & $O(n)$ \\
+encontrarMayorPromedio() & Recorre todos los registros llevando el máximo visto hasta el momento & $n$ comparaciones & $O(n)$ \\
 \addlinespace
-encontrarMayorCreditos() & Recorrido secuencial con máximo & $n$ comparaciones & $O(n)$ \\
+encontrarMayorCreditos() & Recorre todos los registros llevando el máximo visto hasta el momento & $n$ comparaciones & $O(n)$ \\
 \addlinespace
-generarReporteEstadistico() & Recorrido secuencial con múltiples contadores (por carrera, por nivel, etc.) & $n \times c$, $c$ = cantidad de categorías & $O(n)$ \\
+generarReporteEstadistico() & Recorre todos los registros actualizando varios contadores a la vez (por carrera, por nivel, etc.) & $n \times c$, $c$ = cantidad de categorías & $O(n)$ \\
 
 \end{longtable}
 }

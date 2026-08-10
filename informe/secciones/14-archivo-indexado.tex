@@ -89,11 +89,17 @@ donde la tabla vive en un lugar y los indices indican donde buscar.
 \label{sec:reorganizacion}
 
 Cuando la lista de recién ingresados del mapa por carné o del mapa por identificación llega al 10\% del tamaño (elegido arbitrariamente) de su zona ordenada,
-se ejecuta una reorganización: se juntan la zona ordenada y la lista de recién ingresados en $O(n \log n)$, 
+se ejecuta una reorganización: como la zona ordenada ($n$) ya está ordenada, solo se ordenan los $k$ recién ingresados y se mezclan linealmente con ella, en $O(n + k\log k)$,
 y la lista queda vacía otra vez. Esta reorganización ocurre solo en la estructura del mapa en RAM.
 
-En la estructura del estudiante se definio un valor de estado para cada registro, que indica si el estudiante esta activo o inactivo.
-Estos deben borrarse del sistema de archivos ya que son basura; por ello al apagar el sistema:
+Como esta reorganización ocurre cada $0.1n$ inserciones, el costo de \texttt{registrarPosicionEnMapa} (y por extensión de \texttt{registrarEstudiante}) promediado entre todas las inserciones no es $O(1)$: es
+\[
+\frac{O(n + k\log k)}{0.1n} = O(\log n)
+\]
+porque el costo dominante de la reorganización es un ordenamiento, no una copia lineal.
+
+Cada registro tiene un campo \texttt{marcadoParaPurga} independiente de su estado académico (sección~\ref{sec:justificacion-campos}).
+Los registros marcados deben borrarse del sistema de archivos ya que son basura; por ello al apagar el sistema:
 \begin{itemize}
     \item Se purgan los registros inactivos de los tres archivos de datos
     \item Se reconstruyen los tres mapas desde cero a partir del archivo ya compactado

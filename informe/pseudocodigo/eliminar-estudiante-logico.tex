@@ -8,7 +8,7 @@ funcion eliminarEstudianteLogico(carne):
     marcarInactivoEnMapa(carne)
 
     academico = leerRegistroEnOffset(academico.dat, posicion)
-    academico.estado = 0
+    academico.marcadoParaPurga = 1
     escribirRegistroEnOffset(academico.dat, posicion, academico)
 
     retornar EXITO

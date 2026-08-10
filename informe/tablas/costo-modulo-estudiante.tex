@@ -6,55 +6,55 @@
 \endhead
 
 registrarEstudiante &
-    Inserción en el mapa más escritura de 3 registros de tamaño fijo &
+    Inserta la posición en el mapa y escribe 3 registros de tamaño fijo &
     $1 + 3$ &
-    $O(1)$\newline amortizado \\
+    $O(\log n)$\newline en promedio \\
 \addlinespace
 
 buscarEstudiantePorCarne &
-    Búsqueda en el mapa más 1 lectura en offset &
+    Busca la posición en el mapa y lee el registro en ese offset &
     $\log n + 1$ &
     $O(\log n)$ \\
 \addlinespace
 
 buscarEstudiantesPorApellido &
-    Búsqueda en el mapa de apellido más $k$ lecturas de coincidencias &
+    Busca en el mapa de apellido y lee cada una de las $k$ coincidencias &
     $\log n + k$ &
     $O(\log n)$\newline$+ O(k)$ \\
 \addlinespace
 
 modificarEstudiante &
-    Búsqueda en el mapa más escritura en offset existente &
+    Busca la posición en el mapa y sobrescribe el registro existente en ese offset &
     $\log n + 1$ &
     $O(\log n)$ \\
 \addlinespace
 
 eliminarEstudianteLogico &
-    Búsqueda en el mapa más marcar \texttt{estado = 0} en mapa y archivo &
+    Busca la posición en el mapa y marca \texttt{marcadoParaPurga = 1} tanto en el mapa como en el archivo &
     $\log n + 2$ &
     $O(\log n)$ \\
 \addlinespace
 
 consultarExpedienteCompleto &
-    Búsqueda en el mapa más 3 lecturas (identidad, académico, contacto) &
+    Busca la posición en el mapa y lee los tres registros (identidad, académico, contacto) &
     $\log n + 3$ &
     $O(\log n)$ \\
 \addlinespace
 
 mostrarTodosLosEstudiantes &
-    Recorrido secuencial completo &
+    Recorre el archivo completo de principio a fin &
     $n$ &
     $O(n)$ \\
 \addlinespace
 
 mostrarEstudiantesPorCarrera &
-    Recorrido secuencial con filtro &
+    Recorre el archivo completo y filtra por carrera &
     $n$ comparaciones &
     $O(n)$ \\
 \addlinespace
 
 actualizarPromedio / actualizarCreditosAprobados &
-    Búsqueda en el mapa más escritura en \texttt{academico.dat} &
+    Busca la posición en el mapa y sobrescribe el valor en \texttt{academico.dat} &
     $\log n + 1$ &
     $O(\log n)$ \\
 

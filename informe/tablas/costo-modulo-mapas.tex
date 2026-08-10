@@ -6,31 +6,31 @@
 \endhead
 
 buscarPosicionPorCarne &
-    Binaria en zona ordenada, lineal en lista de recién ingresados si no hay coincidencia &
+    Busca con búsqueda binaria en la zona ordenada; si no aparece, revisa uno por uno la lista de recién ingresados &
     $\log n + k$ &
     $O(\log n)$\newline$+ O(k)$ \\
 \addlinespace
 
 registrarPosicionEnMapa &
-    Inserción al final de la lista de recién ingresados &
-    $1$ operación\newline(amortizado) &
-    $O(1)$\newline amortizado \\
+    Agrega la nueva entrada al final de la lista de recién ingresados; cada $0.1n$ inserciones dispara \texttt{fusionarRecienIngresados} &
+    $1$ operación\newline(en promedio, contando la reorganización periódica) &
+    $O(\log n)$\newline en promedio \\
 \addlinespace
 
 fusionarRecienIngresados &
-    Mezcla ordenada de zona ordenada ($n$) y lista de recién ingresados ($k$) &
-    $(n+k)\log(n+k)$ &
-    $O(n \log n)$ \\
+    Ordena solo los $k$ recién ingresados y los mezcla en un solo recorrido con la zona ordenada ($n$), que ya estaba ordenada &
+    $k\log k + n$ &
+    $O(n + k\log k)$ \\
 \addlinespace
 
 buscarPosicionesPorCampo &
-    Binaria en zona ordenada, lineal en lista de recién ingresados &
+    Busca con búsqueda binaria en la zona ordenada y recorre la lista de recién ingresados &
     $\log n + k$ &
     $O(\log n)$\newline$+ O(k)$ \\
 \addlinespace
 
 construirMapaPorCampo(apellido) &
-    Copia de $n$ llaves más ordenamiento &
+    Copia las $n$ llaves y las ordena &
     $n + n\log n$ &
     $O(n \log n)$ \\
 

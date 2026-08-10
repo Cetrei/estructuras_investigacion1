@@ -54,10 +54,15 @@ float &
 4 B &
 Requiere parte decimal. \\
 
-estado &
+estadoAcademico &
+enum (int) &
+4 B &
+Condición académica del estudiante (activo, inactivo, permiso, etc); no indica si el registro debe eliminarse \\
+
+marcadoParaPurga &
 int (bool a mano) &
 4 B &
-0 para inactivo, 1 para activo; sostiene el borrado lógico sin usar \texttt{bool} \\
+0 o 1; bandera de borrado lógico independiente del estado académico, para que \texttt{purgarInactivos()} nunca borre un expediente solo por estar en pausa o con permiso \\
 
 correo &
 char[41] &

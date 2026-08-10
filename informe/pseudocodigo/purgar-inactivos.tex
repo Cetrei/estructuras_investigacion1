@@ -5,20 +5,22 @@ funcion purgarInactivos():
     para cada posicion desde 0 hasta contarRegistros() - 1:
         academico = leerRegistroEnOffset(academico.dat, posicion)
 
-        si academico.estado == 1:
+        si academico.marcadoParaPurga != 1:
             identidad = leerRegistroEnOffset(identidad.dat, posicion)
             contacto  = leerRegistroEnOffset(contacto.dat, posicion)
             agregarRegistroAlFinal(identidadTemp.dat, identidad)
             agregarRegistroAlFinal(academicoTemp.dat, academico)
             agregarRegistroAlFinal(contactoTemp.dat, contacto)
-        // si estado es 0, el registro se descarta y no pasa al archivo nuevo
+        // si marcadoParaPurga es 1, el registro se descarta y no pasa al archivo nuevo
+        // (independiente de estadoAcademico: un estudiante en pausa o con permiso
+        // no se marca para purga, asi que nunca se elimina solo por su estado academico)
 
     reemplazarArchivo(identidad.dat, identidadTemp.dat)
     reemplazarArchivo(academico.dat, academicoTemp.dat)
     reemplazarArchivo(contacto.dat, contactoTemp.dat)
 
     // las posiciones cambiaron: reconstruir los tres mapas desde cero,
-    // no se puede reutilizar la lista de recien ingresados anterior (ver ADR 004)
+    // no se puede reutilizar la lista de recien ingresados anterior
     mapaCarne = reconstruirMapa(identidad.dat, CARNE)
     mapaIdentificacion = reconstruirMapa(identidad.dat, IDENTIFICACION)
     mapaApellido = reconstruirMapa(identidad.dat, APELLIDO)
