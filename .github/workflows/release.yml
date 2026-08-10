@@ -51,90 +51,29 @@ jobs:
           working_directory: informe
           root_file: tabla-resumen.tex
 
-      - name: Instalar LibreOffice para convertir el PDF a un editable
-        run: sudo apt-get update && sudo apt-get install -y libreoffice-writer libreoffice-draw
-
-      - name: Generar el documento editable (.docx) a partir del PDF compilado
-        run: |
-          set -e
-          test -f informe/main.pdf || { echo "informe/main.pdf no existe"; ls -la informe; exit 1; }
-          file informe/main.pdf || { echo "informe/main.pdf no es un archivo valido"; exit 1; }
-
-          export HOME=/tmp/loffice-home
-          mkdir -p "$HOME"
-
-          salida=/tmp/loffice-outdir
-          mkdir -p "$salida"
-          chmod 777 "$salida"
-
-          intentos=0
-          hasta=5
-          exito=0
-          while [ "$intentos" -lt "$hasta" ]; do
-            intentos=$((intentos + 1))
-            rm -f "$salida/main.docx"
-
-            soffice --headless --norestore --invisible \
-              -env:UserInstallation=file:///tmp/loffice-profile \
-              --infilter="writer_pdf_import" \
-              --convert-to docx:"MS Word 2007 XML" \
-              --outdir "$salida" "$(pwd)/informe/main.pdf" 2>&1 || true
-
-            if [ -f "$salida/main.docx" ]; then
-              exito=1
-              break
-            fi
-
-            echo "soffice no genero main.docx (intento $intentos/$hasta)"
-            pkill -9 soffice.bin 2>/dev/null || true
-            pkill -9 soffice 2>/dev/null || true
-            rm -rf /tmp/loffice-profile "$HOME"
-            mkdir -p "$HOME"
-            sleep 5
-          done
-
-          if [ "$exito" -ne 1 ]; then
-            echo "soffice no pudo convertir informe/main.pdf tras $intentos intentos"
-            echo "Contenido de $salida:"
-            ls -la "$salida"
-            exit 1
-          fi
-
-          mv "$salida/main.docx" informe.docx
-
       - name: Armar la carpeta de entrega
         run: |
           mkdir -p "$NOMBRE_ENTREGA/diagramas"
 
-          # 1. Informe tecnico en PDD
+          # 1. Informe tecnico en PDF
           cp informe/main.pdf "$NOMBRE_ENTREGA/informe-tecnico.pdf"
 
-          # 2. Documento editable
-          cp informe.docx "$NOMBRE_ENTREGA/informe-editable.docx"
-
-          cat > "$NOMBRE_ENTREGA/README.md" <<EOF
-          # Sobre \`informe-editable.docx\`
-
-          Este \`.docx\` es una conversion automatica del PDF ya compilado
-          (\`informe-tecnico.pdf\`), generada con LibreOffice headless durante el release.
-
-          Como consecuencia, algunos detalles de formato (tablas, referencias, estilo APA)
-          pueden verse ligeramente distintos en Word respecto al PDF original.
-
-          Esto tuvo que hacerse asi ya que el compilador pandoc no soporta el estilo APA7, tablas y diagramas
-          asi que generaba un documento corrupto o vacio.
-
-          La fuente de verdad del informe es el LaTeX en \`informe/main.tex\`
-          dentro del repositorio:
-          $GITHUB_SERVER_URL/$GITHUB_REPOSITORY
-          EOF
-
-          # 3. Tabla resumen de funciones, tambien como PDF aparte
+          # 2. Tabla resumen de funciones, tambien como PDF aparte
           cp informe/tabla-resumen.pdf "$NOMBRE_ENTREGA/tabla-resumen-funciones.pdf"
 
-          # 4. Diagramas utilizados durante el analisis (fuente .mmd + renders)
+          # 3. Diagramas utilizados durante el analisis (fuente .mmd + renders)
           cp -r diagramas/src "$NOMBRE_ENTREGA/diagramas/fuente"
           cp -r diagramas/output "$NOMBRE_ENTREGA/diagramas/renderizados"
+
+          cat > "$NOMBRE_ENTREGA/README.md" <<EOF
+          # Sobre el documento editable (.docx)
+
+          Este informe se realizo en LaTeX y como usa formaatos especiales de APA 7 no es renderizable a docs
+          de manera directa, por lo que el documento editable se genero a mano con un convertidor en linea a partir del PDF final,
+
+          La fuente de verdad del informe es el LaTeX dentro del repositorio:
+          $GITHUB_SERVER_URL/$GITHUB_REPOSITORY
+          EOF
 
       - name: Comprimir la entrega
         run: zip -r "$NOMBRE_ENTREGA.zip" "$NOMBRE_ENTREGA"
