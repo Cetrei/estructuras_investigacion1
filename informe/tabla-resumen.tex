@@ -7,6 +7,9 @@
 \usepackage{longtable}
 \usepackage{booktabs}
 \usepackage[margin=2.5cm]{geometry}
+\usepackage{collcell}
+\usepackage{seqsplit}
+\newcolumntype{F}[1]{>{\collectcell\seqsplit}p{#1}<{\endcollectcell}}
 
 \begin{document}
 
