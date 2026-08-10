@@ -63,19 +63,23 @@ jobs:
           export HOME=/tmp/loffice-home
           mkdir -p "$HOME"
 
+          salida=/tmp/loffice-outdir
+          mkdir -p "$salida"
+          chmod 777 "$salida"
+
           intentos=0
           hasta=5
           exito=0
           while [ "$intentos" -lt "$hasta" ]; do
             intentos=$((intentos + 1))
-            rm -f main.docx
+            rm -f "$salida/main.docx"
 
             soffice --headless --norestore --invisible \
               -env:UserInstallation=file:///tmp/loffice-profile \
               --convert-to docx:"MS Word 2007 XML" \
-              --outdir "$(pwd)" "$(pwd)/informe/main.pdf" 2>&1 || true
+              --outdir "$salida" "$(pwd)/informe/main.pdf" 2>&1 || true
 
-            if [ -f main.docx ]; then
+            if [ -f "$salida/main.docx" ]; then
               exito=1
               break
             fi
@@ -90,12 +94,12 @@ jobs:
 
           if [ "$exito" -ne 1 ]; then
             echo "soffice no pudo convertir informe/main.pdf tras $intentos intentos"
-            echo "Contenido del directorio:"
-            ls -la "$(pwd)"
+            echo "Contenido de $salida:"
+            ls -la "$salida"
             exit 1
           fi
 
-          mv main.docx informe.docx
+          mv "$salida/main.docx" informe.docx
 
       - name: Armar la carpeta de entrega
         run: |
