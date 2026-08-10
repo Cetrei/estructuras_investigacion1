@@ -58,27 +58,33 @@ jobs:
         run: |
           set -e
           test -f informe/main.pdf || { echo "informe/main.pdf no existe"; ls -la informe; exit 1; }
+          file informe/main.pdf || { echo "informe/main.pdf no es un archivo valido"; exit 1; }
 
           export HOME=/tmp/loffice-home
           mkdir -p "$HOME"
 
           intentos=0
           hasta=5
-          until soffice --headless --norestore \
+          until soffice --headless --norestore --invisible \
               -env:UserInstallation=file:///tmp/loffice-profile \
               --convert-to docx:"MS Word 2007 XML" \
-              --outdir "$(pwd)" "$(pwd)/informe/main.pdf"; do
+              --outdir "$(pwd)" "$(pwd)/informe/main.pdf" 2>&1; do
             intentos=$((intentos + 1))
             if [ "$intentos" -ge "$hasta" ]; then
               echo "soffice fallo tras $intentos intentos"
+              echo "Contenido del directorio:"
+              ls -la "$(pwd)"
               exit 1
             fi
             echo "soffice fallo (intento $intentos/$hasta), reintentando en 5s..."
             pkill -9 soffice.bin 2>/dev/null || true
-            rm -rf /tmp/loffice-profile
+            pkill -9 soffice 2>/dev/null || true
+            rm -rf /tmp/loffice-profile "$HOME"
+            mkdir -p "$HOME"
             sleep 5
           done
 
+          test -f main.docx || { echo "La conversion no genero main.docx"; ls -la; exit 1; }
           mv main.docx informe.docx
 
       - name: Armar la carpeta de entrega
